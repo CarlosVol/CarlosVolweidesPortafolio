@@ -1,0 +1,49 @@
+---
+const SECTIONS = [
+  { id: 'home',     label: 'index',      num: '00' },
+  { id: 'about',    label: 'about',      num: '01' },
+  { id: 'stack',    label: 'stack',      num: '02' },
+  { id: 'work',     label: 'experience', num: '03' },
+  { id: 'projects', label: 'projects',   num: '04' },
+  { id: 'contact',  label: 'contact',    num: '05' },
+];
+---
+
+<header class="topbar" id="topbar">
+  <div class="topbar-left">
+    <span class="status-dot"></span>
+    <span>carlos.volweides</span>
+    <span style="color: var(--fg-dim)">/ available for work</span>
+  </div>
+  <nav class="topbar-nav">
+    {SECTIONS.map(s => (
+      <a href={`/#${s.id}`} data-section={s.id}>
+        <span class="num">{s.num}</span>
+        {s.label}
+      </a>
+    ))}
+  </nav>
+  <button class="cmdk-hint" id="cmdk-trigger" aria-label="Open command palette">
+    <kbd>⌘</kbd><kbd>K</kbd>
+  </button>
+</header>
+
+<script>
+  // Scroll spy — marks active nav link based on visible section
+  const links = document.querySelectorAll<HTMLAnchorElement>('.topbar-nav a[data-section]');
+
+  const setActive = (id: string) => {
+    links.forEach(a => {
+      a.classList.toggle('active', a.dataset.section === id);
+    });
+  };
+
+  const obs = new IntersectionObserver(
+    entries => {
+      entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id); });
+    },
+    { rootMargin: '-30% 0px -60% 0px' }
+  );
+
+  document.querySelectorAll('section[id]').forEach(el => obs.observe(el));
+</script>

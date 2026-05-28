@@ -1,0 +1,326 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import CmdK from '../components/CmdK.tsx';
+import { getCollection } from 'astro:content';
+
+const projects = (await getCollection('projects')).sort(
+  (a, b) => a.data.idx.localeCompare(b.data.idx)
+);
+
+const STACK = [
+  { title: 'Languages',    items: ['TypeScript', 'JavaScript', 'Python', 'PHP'] },
+  { title: 'Frontend',     items: ['React', 'Next.js', 'React Native', 'Vite'] },
+  { title: 'Backend',      items: ['FastAPI', 'Node.js', 'Flask', 'Django'] },
+  { title: 'Data',         items: ['PostgreSQL', 'MongoDB', 'Supabase', 'MySQL'] },
+  { title: 'Architecture', items: ['Clean Architecture', 'DDD', 'Event-driven', 'OOP'] },
+  { title: 'AI / LLM',    items: ['RAG systems', 'Vercel AI', 'Claude Code', 'Copilot'] },
+  { title: 'Practices',   items: ['Unit testing', 'Git Flow', 'Code review', 'Refactoring'] },
+  { title: 'Tooling',     items: ['Git', 'Jira', 'Scrum', 'Figma'] },
+];
+
+const EXPERIENCE = [
+  {
+    company: 'Digitan Agency',
+    role: 'Fullstack Developer',
+    date: '2025 — Now',
+    current: true,
+    summary: 'Building end-to-end web and mobile applications across logistics platforms, billing systems and multi-app integrations.',
+    bullets: [
+      'Diseño e implementación de APIs escalables aplicando arquitectura limpia, DDD y comunicación basada en eventos.',
+      'Maquetación a partir de Figma e integración full-stack desde requerimientos funcionales hasta despliegue.',
+      'Entrega autónoma de un proyecto completo en comunicación directa con cliente, en entornos develop / staging / production.',
+    ],
+    tags: ['Next.js', 'FastAPI', 'React Native', 'PostgreSQL', 'AWS'],
+  },
+];
+
+const PROJECT_VISUALS: Record<string, string> = {
+  'atlas-protocol': `┌─────────────────────────────┐
+│  atlas/protocol             │
+│  ─────────────              │
+│  > generate_course("rust")  │
+│  · indexing knowledge ████  │
+│  · embedding 1.4M tokens    │
+│  · path generated [12 mod]  │
+│                             │
+│  rag.query("ownership")     │
+│  └─ context: 8 chunks       │
+│  └─ confidence: 0.94        │
+│                             │
+│  ◉ session: active          │
+└─────────────────────────────┘`,
+  'repositorio-ugma': `┌──────────────────┐
+│ ugma/repo        │
+│ ──               │
+│ tesis: 247       │
+│ aprobadas: 198   │
+│ pendientes: 49   │
+│ usuarios: 1,2k   │
+│                  │
+│ [admin · alumno] │
+└──────────────────┘`,
+  'luxdata': `┌──────────────┐
+│ luxdata      │
+│ ──           │
+│ rooms 64/82  │
+│ checkin  12  │
+│ revenue ↑18% │
+└──────────────┘`,
+};
+
+const SECTION_SIZES: Record<string, string> = {
+  'atlas-protocol': 'full',
+  'repositorio-ugma': 'large',
+  'luxdata': 'small',
+};
+---
+
+<BaseLayout>
+  <div class="bg-grid"></div>
+  <div class="bg-noise"></div>
+
+  <Header />
+
+  <main>
+    <!-- Hero -->
+    <section id="home" class="hero">
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <span class="k">Location</span>
+          <span class="v">Caracas, VE</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="k">Role</span>
+          <span class="v">Fullstack Engineer</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="k">Status</span>
+          <span class="v" style="color: var(--accent)">● Open to work</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="k">Local time</span>
+          <span class="v" id="local-time">—</span>
+        </div>
+      </div>
+
+      <h1 class="reveal">
+        Carlos<br />
+        Volweides<span class="accent">_fs</span>
+      </h1>
+
+      <div class="hero-tagline reveal">
+        <span class="role">Fullstack Engineer</span>
+        <span class="arrow">→</span>
+        <span>
+          construyo aplicaciones web &amp; mobile end-to-end con énfasis en
+          <strong style="color: var(--fg)"> arquitectura limpia</strong>,
+          <strong style="color: var(--fg)"> DDD</strong> e integración de
+          <strong style="color: var(--fg)"> LLMs / RAG</strong>.
+        </span>
+      </div>
+
+      <div class="hero-cta reveal">
+        <a href="/projects" class="btn primary">
+          View projects <span class="arrow">→</span>
+        </a>
+        <a href="#contact" class="btn">
+          Get in touch <span class="arrow">↗</span>
+        </a>
+      </div>
+
+      <div class="hero-side">
+        ─── system.online<br />
+        ─── runtime: node·py<br />
+        ─── lat: 10.48° N<br />
+        ─── lon: -66.87° W<br />
+        <br />
+        ◉ deploying<br />
+        ◉ refactoring<br />
+        ◉ shipping
+      </div>
+
+      <div class="scroll-indicator">
+        <span>scroll</span>
+        <div class="line"></div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about">
+      <div class="section-label"><span class="idx">01</span> / about</div>
+      <div class="about-wrap">
+        <div class="about-left reveal">
+          <h2>Construyo software<br /><span class="em">de principio a fin.</span></h2>
+          <div class="meta">
+            <div class="meta-row"><span class="k">Based</span><span class="v">Caracas, VE</span></div>
+            <div class="meta-row"><span class="k">Edu</span><span class="v">UGMA · Ing. Informática</span></div>
+            <div class="meta-row"><span class="k">Years</span><span class="v">3+ shipping</span></div>
+            <div class="meta-row"><span class="k">Mode</span><span class="v">Remote · Async</span></div>
+          </div>
+        </div>
+        <div class="about-right reveal">
+          <p>
+            Soy <strong>desarrollador fullstack</strong> con experiencia construyendo aplicaciones web y mobile end-to-end.
+            Trabajo principalmente con <span class="hl">JavaScript/TypeScript</span>, <span class="hl">React</span>,
+            <span class="hl">Next.js</span>, <span class="hl">React Native</span> y <span class="hl">Python</span> (FastAPI, Flask, Django).
+          </p>
+          <p>
+            Mi enfoque está en el diseño e implementación de <strong>APIs escalables</strong> aplicando arquitectura limpia,
+            Domain-Driven Design y comunicación basada en eventos. He participado en sistemas de logística, facturación y
+            plataformas multi-aplicación que conectan web y mobile.
+          </p>
+          <p>
+            Trabajo bien en equipo bajo Scrum, pero también entrego proyectos completos de forma autónoma — desde
+            requerimientos hasta despliegue. Me interesan los sistemas escalables y la integración de
+            <strong>LLMs y RAG</strong> en productos reales.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stack -->
+    <section id="stack">
+      <div class="section-label"><span class="idx">02</span> / stack</div>
+      <div class="stack-grid reveal">
+        {STACK.map((cell, i) => (
+          <div class="stack-cell">
+            <div class="stack-cell-head">
+              <div class="stack-cell-title">{cell.title}</div>
+              <div class="stack-cell-num">{String(i + 1).padStart(2, '0')}</div>
+            </div>
+            <ul class="stack-cell-list">
+              {cell.items.map(it => <li>{it}</li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Experience -->
+    <section id="work">
+      <div class="section-label"><span class="idx">03</span> / experience</div>
+      {EXPERIENCE.map(e => (
+        <div class="exp-row reveal">
+          <div class="exp-date">
+            {e.current && <span class="now"></span>}{e.date}
+          </div>
+          <div class="exp-main">
+            <h3>{e.company}</h3>
+            <div class="role">{e.role}</div>
+            <p>{e.summary}</p>
+            <ul>
+              {e.bullets.map(b => <li>{b}</li>)}
+            </ul>
+          </div>
+          <div class="exp-tags">
+            {e.tags.map(t => <span class="exp-tag">{t}</span>)}
+          </div>
+        </div>
+      ))}
+    </section>
+
+    <!-- Projects -->
+    <section id="projects">
+      <div class="section-label"><span class="idx">04</span> / selected work</div>
+      <div class="projects-grid">
+        {projects.map(p => (
+          <article class={`project ${SECTION_SIZES[p.id] ?? ''} reveal`}>
+            <div class="project-content">
+              <div class="project-header">
+                <span class="index">{p.data.idx} / 03</span>
+                <span class="status">
+                  <span class={`status-tag ${p.data.status === 'live' ? 'live' : ''}`}>
+                    {p.data.statusLabel}
+                  </span>
+                </span>
+              </div>
+              <h3>{p.data.title}</h3>
+              <div class="project-role">{p.data.role}</div>
+              <p class="project-desc">{p.data.description}</p>
+              <div class="project-tech">
+                {p.data.stack.map(t => <span>{t}</span>)}
+              </div>
+              <a href={`/projects/${p.id}`} class="project-cta">View case study</a>
+            </div>
+            {PROJECT_VISUALS[p.id] && (
+              <pre class="project-visual">{PROJECT_VISUALS[p.id]}</pre>
+            )}
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="contact">
+      <div class="contact-prompt">
+        <span class="accent">$</span> ./let-s-build-something<span class="cursor"></span>
+      </div>
+      <h2>
+        Construyamos<br />
+        <a href="mailto:carlos.volweides@gmail.com">algo&nbsp;real</a>.
+      </h2>
+      <div class="contact-grid">
+        <a class="contact-cell" href="mailto:carlos.volweides@gmail.com">
+          <span class="contact-cell-k">Email</span>
+          <span class="contact-cell-v">carlos.volweides@gmail.com</span>
+        </a>
+        <a class="contact-cell" href="https://github.com/CarlosVol" target="_blank" rel="noopener">
+          <span class="contact-cell-k">GitHub</span>
+          <span class="contact-cell-v">@CarlosVol</span>
+        </a>
+        <a class="contact-cell" href="https://linkedin.com/in/carlos-volweides" target="_blank" rel="noopener">
+          <span class="contact-cell-k">LinkedIn</span>
+          <span class="contact-cell-v">/in/carlos-volweides</span>
+        </a>
+        <a class="contact-cell" href="tel:+584249163070">
+          <span class="contact-cell-k">Phone</span>
+          <span class="contact-cell-v">+58 424 916 3070</span>
+        </a>
+        <div class="contact-cell">
+          <span class="contact-cell-k">Location</span>
+          <span class="contact-cell-v">Caracas · Venezuela</span>
+        </div>
+        <div class="contact-cell">
+          <span class="contact-cell-k">Status</span>
+          <span class="contact-cell-v" style="color: var(--accent)">● Open to work</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+
+  <CmdK client:load />
+</BaseLayout>
+
+<script>
+  // Local time — Caracas (VET, UTC-4)
+  const el = document.getElementById('local-time');
+  if (el) {
+    const upd = () => {
+      el.textContent = new Date().toLocaleTimeString('en-US', {
+        hour: '2-digit', minute: '2-digit',
+        timeZone: 'America/Caracas', hour12: false,
+      }) + ' VET';
+    };
+    upd();
+    setInterval(upd, 1000);
+  }
+
+  // Reveal on scroll
+  const els = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
+  const reveal = (el: HTMLElement) => el.classList.add('in');
+  const check = () => {
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    els.forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (r.top < vh * 0.9 && r.bottom > 0) reveal(el);
+    });
+  };
+  check();
+  window.addEventListener('scroll', check, { passive: true });
+  window.addEventListener('resize', check);
+  setTimeout(() => els.forEach(reveal), 1500);
+</script>

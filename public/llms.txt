@@ -1,0 +1,42 @@
+# Carlos Volweides — Fullstack Engineer
+
+Carlos Volweides is a fullstack engineer based in Caracas, Venezuela.
+Specializes in TypeScript, JavaScript, Python (FastAPI, Django, Flask), React, Next.js, React Native.
+Focuses on clean architecture, Domain-Driven Design (DDD), event-driven systems, and LLM/RAG integration.
+Available for remote work. Open to work as of 2025.
+
+## Experience
+
+- Digitan Agency (2025–present): Fullstack Developer. Builds end-to-end web and mobile applications
+  for logistics, billing systems, and multi-app integrations using Next.js, FastAPI, React Native,
+  PostgreSQL, and AWS.
+
+## Projects
+
+- **Atlas Protocol** (MVP, closed beta): AI-powered platform for generating personalized technical courses.
+  RAG system over indexed content, LLM-powered study path generation, WebSocket agent chat.
+  Stack: Next.js, Supabase, Vercel AI SDK, FastAPI.
+
+- **Repositorio UGMA** (deployed, internal): Institutional thesis repository for Universidad Gran Mariscal
+  de Ayacucho. 1,200+ users, 247 theses indexed. Approval workflow for coordinators and search for students.
+  Stack: PHP, JavaScript, SQL, NoSQL.
+
+- **Luxdata** (shipped): Hotel management system with reservations, check-in/out, billing, room blocking,
+  and dashboards. Stack: React, Node.js, Express, Tailwind CSS, MySQL.
+
+## Education
+
+- Universidad Gran Mariscal de Ayacucho (UGMA) — Ingeniería Informática
+
+## Contact
+
+- Email: carlos.volweides@gmail.com
+- GitHub: https://github.com/CarlosVol
+- LinkedIn: https://linkedin.com/in/carlos-volweides
+- Phone: +58 424 916 3070
+- Location: Caracas, Venezuela
+
+## Site
+
+This portfolio is built with Astro, TypeScript, and Tailwind CSS, deployed on Vercel.
+Source code: available on request.

@@ -1,0 +1,97 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import CmdK from '../../components/CmdK.tsx';
+import { getCollection, render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const projects = await getCollection('projects');
+  return projects.map(p => ({ params: { slug: p.id }, props: { project: p } }));
+};
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+---
+
+<BaseLayout
+  title={`${project.data.title} — Carlos Volweides`}
+  description={project.data.description}
+>
+  <div class="bg-grid"></div>
+  <div class="bg-noise"></div>
+
+  <Header />
+
+  <main>
+    <section style="padding-top: 140px;">
+      <div class="section-label">
+        <a href="/projects" style="color: var(--fg-dim); transition: color 0.15s;" onmouseenter="this.style.color='var(--fg)'" onmouseleave="this.style.color='var(--fg-dim)'">← projects</a>
+        <span>/</span>
+        <span class="idx">{project.data.idx}</span>
+        <span>{project.data.title.toLowerCase()}</span>
+      </div>
+
+      <div class="project-detail reveal">
+        <h1>{project.data.title}</h1>
+
+        <div class="meta-row">
+          <span>
+            <span style="color: var(--fg-dim); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em;">Role</span>
+            &nbsp; {project.data.role}
+          </span>
+          <span class={`status-tag ${project.data.status === 'live' ? 'live' : ''}`} style="align-self: center;">
+            {project.data.statusLabel}
+          </span>
+        </div>
+
+        <div class="project-tech" style="margin-bottom: 48px;">
+          {project.data.stack.map(t => <span>{t}</span>)}
+        </div>
+
+        <div class="prose">
+          <Content />
+        </div>
+
+        {(project.data.demoUrl || project.data.repoUrl) && (
+          <div style="display: flex; gap: 12px; margin-top: 48px; flex-wrap: wrap;">
+            {project.data.demoUrl && (
+              <a href={project.data.demoUrl} target="_blank" rel="noopener" class="btn primary">
+                Live demo <span class="arrow">↗</span>
+              </a>
+            )}
+            {project.data.repoUrl && (
+              <a href={project.data.repoUrl} target="_blank" rel="noopener" class="btn">
+                View repo <span class="arrow">↗</span>
+              </a>
+            )}
+          </div>
+        )}
+
+        <div style="margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);">
+          <a href="mailto:carlos.volweides@gmail.com" class="btn primary">
+            Request full case study <span class="arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+  <CmdK client:load />
+</BaseLayout>
+
+<script>
+  const els = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
+  const check = () => {
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    els.forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (r.top < vh * 0.9 && r.bottom > 0) el.classList.add('in');
+    });
+  };
+  check();
+  window.addEventListener('scroll', check, { passive: true });
+  setTimeout(() => els.forEach(el => el.classList.add('in')), 1500);
+</script>

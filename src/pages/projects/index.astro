@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import CmdK from '../../components/CmdK.tsx';
+import { getCollection } from 'astro:content';
+
+const projects = (await getCollection('projects')).sort(
+  (a, b) => a.data.idx.localeCompare(b.data.idx)
+);
+---
+
+<BaseLayout
+  title="Projects — Carlos Volweides"
+  description="Selected projects by Carlos Volweides: Atlas Protocol, Repositorio UGMA, Luxdata."
+>
+  <div class="bg-grid"></div>
+  <div class="bg-noise"></div>
+
+  <Header />
+
+  <main>
+    <section style="padding-top: 140px;">
+      <div class="section-label"><span class="idx">04</span> / all projects</div>
+      <div class="projects-grid">
+        {projects.map((p, i) => (
+          <article class={`project reveal`}>
+            <div class="project-content">
+              <div class="project-header">
+                <span class="index">{p.data.idx} / {String(projects.length).padStart(2, '0')}</span>
+                <span class={`status-tag ${p.data.status === 'live' ? 'live' : ''}`}>
+                  {p.data.statusLabel}
+                </span>
+              </div>
+              <h3>{p.data.title}</h3>
+              <div class="project-role">{p.data.role}</div>
+              <p class="project-desc">{p.data.description}</p>
+              <div class="project-tech">
+                {p.data.stack.map(t => <span>{t}</span>)}
+              </div>
+              <a href={`/projects/${p.id}`} class="project-cta">View case study</a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+  <CmdK client:load />
+</BaseLayout>
+
+<script>
+  const els = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
+  const check = () => {
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    els.forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (r.top < vh * 0.9 && r.bottom > 0) el.classList.add('in');
+    });
+  };
+  check();
+  window.addEventListener('scroll', check, { passive: true });
+  setTimeout(() => els.forEach(el => el.classList.add('in')), 1500);
+</script>
