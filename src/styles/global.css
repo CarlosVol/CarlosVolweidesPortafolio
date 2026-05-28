@@ -163,6 +163,34 @@ section {
   display: grid;
   grid-template-rows: auto auto auto auto 1fr;
   position: relative;
+  overflow: hidden;
+}
+
+.hero::before,
+.hero::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  animation: blob-drift 14s ease-in-out infinite alternate;
+}
+.hero::before {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, oklch(0.78 0.12 175 / 0.07) 0%, transparent 70%);
+  top: -120px; left: -220px;
+}
+.hero::after {
+  width: 420px; height: 420px;
+  background: radial-gradient(circle, oklch(0.65 0.15 280 / 0.05) 0%, transparent 70%);
+  top: 180px; right: -140px;
+  animation-duration: 18s;
+  animation-direction: alternate-reverse;
+}
+
+@keyframes blob-drift {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(40px, 60px) scale(1.1); }
 }
 
 .hero-meta {
@@ -182,6 +210,64 @@ section {
   margin-bottom: 40px;
 }
 .hero h1 .accent { color: var(--accent); }
+
+/* Gradient text + glitch effect on hero heading */
+.hero-name {
+  position: relative;
+  display: inline;
+  background: linear-gradient(135deg, var(--fg) 55%, oklch(0.78 0.12 175 / 0.85));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-name .accent {
+  -webkit-text-fill-color: var(--accent);
+}
+.hero-name::before,
+.hero-name::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.hero-name::before {
+  -webkit-text-fill-color: oklch(0.72 0.2 200 / 0.75);
+  color: oklch(0.72 0.2 200 / 0.75);
+}
+.hero-name::after {
+  -webkit-text-fill-color: oklch(0.78 0.15 300 / 0.65);
+  color: oklch(0.78 0.15 300 / 0.65);
+}
+.hero-name:hover::before {
+  opacity: 1;
+  animation: glitch-before 0.38s steps(2) forwards;
+}
+.hero-name:hover::after {
+  opacity: 1;
+  animation: glitch-after 0.38s steps(2) 0.06s forwards;
+}
+
+@keyframes glitch-before {
+  0%   { clip-path: inset(40% 0 58% 0); transform: translate(-3px, 0); }
+  25%  { clip-path: inset(92% 0 1% 0);  transform: translate(3px, 0); }
+  50%  { clip-path: inset(20% 0 75% 0); transform: translate(-2px, 0); }
+  75%  { clip-path: inset(60% 0 30% 0); transform: translate(2px, 0); }
+  100% { clip-path: inset(80% 0 15% 0); transform: translate(0); opacity: 0; }
+}
+@keyframes glitch-after {
+  0%   { clip-path: inset(55% 0 35% 0); transform: translate(3px, 0); }
+  25%  { clip-path: inset(10% 0 82% 0); transform: translate(-3px, 0); }
+  50%  { clip-path: inset(72% 0 8% 0);  transform: translate(1px, 0); }
+  75%  { clip-path: inset(30% 0 60% 0); transform: translate(-1px, 0); }
+  100% { clip-path: inset(45% 0 48% 0); transform: translate(0); opacity: 0; }
+}
 
 .hero-tagline {
   display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
@@ -230,6 +316,24 @@ section {
 .scroll-indicator .line {
   width: 1px; height: 48px;
   background: linear-gradient(to bottom, var(--fg-dim), transparent);
+  position: relative;
+  overflow: hidden;
+}
+.scroll-indicator .line::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 14px;
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+  top: -14px;
+  animation: scroll-drop 1.8s ease-in infinite;
+}
+@keyframes scroll-drop {
+  0%   { top: -14px; opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 0.6; }
+  100% { top: 48px; opacity: 0; }
 }
 
 /* ============================================================
@@ -268,9 +372,12 @@ section {
 .stack-cell {
   padding: 24px;
   border: 1px solid var(--line);
-  transition: background 0.15s;
+  transition: background 0.2s, box-shadow 0.2s;
 }
-.stack-cell:hover { background: var(--bg-elev); }
+.stack-cell:hover {
+  background: var(--bg-elev);
+  box-shadow: inset 0 0 32px -10px oklch(0.78 0.12 175 / 0.12);
+}
 
 .stack-cell-head {
   display: flex; justify-content: space-between; align-items: center;
@@ -343,10 +450,13 @@ section {
   background: var(--bg-card);
   padding: 32px;
   display: flex; flex-direction: column;
-  transition: background 0.15s;
+  transition: background 0.2s, box-shadow 0.2s;
   position: relative; overflow: hidden;
 }
-.project:hover { background: var(--bg-elev); }
+.project:hover {
+  background: var(--bg-elev);
+  box-shadow: inset 3px 0 0 var(--accent), inset 0 0 48px -20px oklch(0.78 0.12 175 / 0.1);
+}
 
 .project.full { grid-column: span 2; }
 
@@ -473,7 +583,11 @@ footer .left { display: flex; gap: 16px; }
    Reveal animation
    ============================================================ */
 
-.reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+}
 .reveal.in { opacity: 1; transform: none; }
 
 /* ============================================================
@@ -550,4 +664,17 @@ footer .left { display: flex; gap: 16px; }
 @media (max-width: 600px) {
   .contact-grid { grid-template-columns: 1fr; }
   .hero h1 { font-size: 52px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal { transform: none !important; transition: opacity 0.1s !important; }
+  .hero::before, .hero::after { animation: none; }
+  .hero-name:hover::before, .hero-name:hover::after { animation: none; opacity: 0; }
+  .scroll-indicator .line::after { animation: none; }
+  .status-dot { animation: none; }
 }

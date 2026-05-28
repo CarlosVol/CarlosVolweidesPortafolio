@@ -105,7 +105,7 @@ const SECTION_SIZES: Record<string, string> = {
         </div>
       </div>
 
-      <h1 class="reveal">
+      <h1 class="reveal hero-name" data-text="Carlos Volweides_fs">
         Carlos<br />
         Volweides<span class="accent">_fs</span>
       </h1>
@@ -255,7 +255,7 @@ const SECTION_SIZES: Record<string, string> = {
     <!-- Contact -->
     <section id="contact" class="contact">
       <div class="contact-prompt">
-        <span class="accent">$</span> ./let-s-build-something<span class="cursor"></span>
+        <span class="accent">$</span> <span class="prompt-text"></span><span class="cursor"></span>
       </div>
       <h2>
         Construyamos<br />
@@ -309,9 +309,17 @@ const SECTION_SIZES: Record<string, string> = {
     setInterval(upd, 1000);
   }
 
-  // Reveal on scroll
+  // Reveal on scroll with sibling stagger
   const els = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
-  const reveal = (el: HTMLElement) => el.classList.add('in');
+  const reveal = (el: HTMLElement) => {
+    if (el.classList.contains('in')) return;
+    const siblings = Array.from(el.parentElement?.children ?? []).filter(
+      c => c.classList.contains('reveal')
+    ) as HTMLElement[];
+    const idx = siblings.indexOf(el);
+    if (idx > 0) el.style.transitionDelay = `${idx * 60}ms`;
+    el.classList.add('in');
+  };
   const check = () => {
     const vh = window.innerHeight || document.documentElement.clientHeight;
     els.forEach(el => {
@@ -322,5 +330,28 @@ const SECTION_SIZES: Record<string, string> = {
   check();
   window.addEventListener('scroll', check, { passive: true });
   window.addEventListener('resize', check);
-  setTimeout(() => els.forEach(reveal), 1500);
+  setTimeout(() => els.forEach(el => { el.style.transitionDelay = '0ms'; reveal(el); }), 1500);
+
+  // Typewriter for contact prompt — fires once when section enters viewport
+  const promptEl = document.querySelector<HTMLElement>('.prompt-text');
+  const PROMPT_TEXT = './let-s-build-something';
+  if (promptEl) {
+    const typewrite = (target: HTMLElement, text: string, speed = 42) => {
+      let i = 0;
+      target.textContent = '';
+      const tick = () => {
+        target.textContent += text[i++];
+        if (i < text.length) setTimeout(tick, speed);
+      };
+      tick();
+    };
+    const observer = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) {
+        typewrite(promptEl, PROMPT_TEXT);
+        observer.disconnect();
+      }
+    }, { threshold: 0.5 });
+    const contactSection = document.getElementById('contact');
+    if (contactSection) observer.observe(contactSection);
+  }
 </script>
