@@ -4,6 +4,35 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import CmdK from '../components/CmdK.tsx';
 import { getCollection } from 'astro:content';
+import {
+  Code2, Braces, Cpu, FileCode,
+  Atom, Layers, Smartphone, Zap,
+  Server, FlaskConical, Globe, Box,
+  Database, Cylinder,
+  Share2, Boxes, Workflow,
+  Brain, Bot, Terminal,
+  TestTube2, GitBranch, MessageSquareCode, RefreshCw,
+  Users, LayoutDashboard, PenTool,
+} from 'lucide-react';
+
+const STACK_ICONS: Record<string, any> = {
+  // Languages
+  'TypeScript': Code2, 'JavaScript': Braces, 'Python': Cpu, 'PHP': FileCode,
+  // Frontend
+  'React': Atom, 'Next.js': Layers, 'React Native': Smartphone, 'Vite': Zap,
+  // Backend
+  'FastAPI': Zap, 'Node.js': Server, 'Flask': FlaskConical, 'Django': Globe,
+  // Data
+  'PostgreSQL': Database, 'MongoDB': Cylinder, 'Supabase': Database, 'MySQL': Database,
+  // Architecture
+  'Clean Architecture': Layers, 'DDD': Box, 'Event-driven': Workflow, 'OOP': Boxes,
+  // AI / LLM
+  'RAG systems': Brain, 'Vercel AI': Bot, 'Claude Code': Terminal, 'Copilot': Bot,
+  // Practices
+  'Unit testing': TestTube2, 'Git Flow': GitBranch, 'Code review': MessageSquareCode, 'Refactoring': RefreshCw,
+  // Tooling
+  'Git': GitBranch, 'Jira': LayoutDashboard, 'Scrum': Users, 'Figma': PenTool,
+};
 
 const projects = (await getCollection('projects')).sort(
   (a, b) => a.data.idx.localeCompare(b.data.idx)
@@ -191,7 +220,15 @@ const SECTION_SIZES: Record<string, string> = {
               <div class="stack-cell-num">{String(i + 1).padStart(2, '0')}</div>
             </div>
             <ul class="stack-cell-list">
-              {cell.items.map(it => <li>{it}</li>)}
+              {cell.items.map(it => {
+                const Icon = STACK_ICONS[it];
+                return (
+                  <li>
+                    {Icon && <Icon size={13} strokeWidth={1.5} />}
+                    {it}
+                  </li>
+                );
+              })}
             </ul>
           </div>
         ))}
