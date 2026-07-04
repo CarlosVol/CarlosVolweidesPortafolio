@@ -5,6 +5,8 @@ import Footer from '../../components/Footer.astro';
 import CmdK from '../../components/CmdK.tsx';
 import { getCollection } from 'astro:content';
 
+export const prerender = true;
+
 const projects = (await getCollection('projects')).sort(
   (a, b) => a.data.idx.localeCompare(b.data.idx)
 );

@@ -1,0 +1,351 @@
+---
+---
+
+<div class="contact-form-wrap">
+  <form id="contact-form" class="contact-form" novalidate>
+    <div class="form-row">
+      <div class="field">
+        <label for="nombre">Nombre</label>
+        <input id="nombre" name="nombre" type="text" autocomplete="name" required />
+        <span class="field-error" id="nombre-error" aria-live="polite"></span>
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="email" required />
+        <span class="field-error" id="email-error" aria-live="polite"></span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="tipo">Motivo</label>
+      <select id="tipo" name="tipo" required>
+        <option value="" disabled selected>Selecciona una opción</option>
+        <option value="trabajo">Oferta de trabajo</option>
+        <option value="freelance">Proyecto freelance</option>
+        <option value="networking">Networking / Otro</option>
+      </select>
+      <span class="field-error" id="tipo-error" aria-live="polite"></span>
+    </div>
+
+    <div class="field" id="empresa-field" hidden>
+      <label for="empresa" id="empresa-label">Empresa</label>
+      <input id="empresa" name="empresa" type="text" />
+    </div>
+
+    <div class="field">
+      <label for="mensaje">Mensaje</label>
+      <textarea id="mensaje" name="mensaje" rows="5" maxlength="1000" required></textarea>
+      <p class="mensaje-hint" id="mensaje-hint" hidden></p>
+      <div class="mensaje-meta">
+        <span class="field-error" id="mensaje-error" aria-live="polite"></span>
+        <span class="char-counter" id="char-counter" aria-live="polite">0 / 1000</span>
+      </div>
+    </div>
+
+    <button type="submit" id="submit-btn" class="btn primary form-submit">Enviar mensaje</button>
+
+    <div id="form-status" class="form-status" role="alert" hidden></div>
+  </form>
+</div>
+
+<style>
+  .contact-form-wrap {
+    max-width: 32rem;
+    margin: 48px auto 0;
+    padding: clamp(20px, 4vw, 40px);
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  @media (min-width: 640px) {
+    .form-row { grid-template-columns: 1fr 1fr; }
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .field label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--fg);
+    background: var(--bg-elev);
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    padding: 10px 12px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .field input::placeholder,
+  .field textarea::placeholder {
+    color: var(--fg-dim);
+  }
+
+  .field select { cursor: pointer; }
+
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+
+  .field input.invalid,
+  .field select.invalid,
+  .field textarea.invalid {
+    border-color: #e5484d;
+  }
+
+  .field textarea { resize: vertical; }
+
+  .field-error {
+    font-size: 12px;
+    color: #e5484d;
+    min-height: 14px;
+  }
+
+  .mensaje-hint {
+    font-size: 12px;
+    color: var(--fg-mute);
+    margin: 0;
+  }
+
+  .mensaje-meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .char-counter {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-dim);
+    white-space: nowrap;
+  }
+
+  .form-submit {
+    align-self: flex-start;
+    cursor: pointer;
+    padding: 12px 28px;
+    font-size: 14px;
+  }
+  .form-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 480px) {
+    .form-submit {
+      align-self: stretch;
+      justify-content: center;
+    }
+  }
+
+  .form-status {
+    border-radius: 6px;
+    padding: 14px 16px;
+    font-size: 14px;
+  }
+  .form-status .status-title {
+    font-weight: 600;
+    margin: 0 0 2px;
+  }
+  .form-status .status-subtitle {
+    margin: 0;
+    color: var(--fg-mute);
+  }
+  .form-status.success {
+    background: color-mix(in oklch, #30a46c 15%, transparent);
+    border: 1px solid #30a46c;
+    color: #30a46c;
+  }
+  .form-status.success .status-subtitle { color: var(--fg-mute); }
+  .form-status.error {
+    background: color-mix(in oklch, #e5484d 15%, transparent);
+    border: 1px solid #e5484d;
+    color: #e5484d;
+  }
+</style>
+
+<script>
+  type Tipo = 'trabajo' | 'freelance' | 'networking';
+
+  const TIPO_CONFIG: Record<Tipo, { empresaLabel: string; empresaPlaceholder: string; mensajeHint: string }> = {
+    trabajo: {
+      empresaLabel: 'Empresa que contrata',
+      empresaPlaceholder: 'Ej: Google, startup, agencia...',
+      mensajeHint: 'Ej: empresa, stack tecnológico, modalidad (remoto/híbrido) y rango salarial si puedes compartirlo.',
+    },
+    freelance: {
+      empresaLabel: 'Tu empresa o proyecto',
+      empresaPlaceholder: 'Ej: Mi startup, Proyecto X...',
+      mensajeHint: 'Ej: descripción del proyecto, stack preferido, timeline aproximado y presupuesto.',
+    },
+    networking: {
+      empresaLabel: 'Empresa u organización',
+      empresaPlaceholder: 'Opcional',
+      mensajeHint: 'Cuéntame sobre ti o en qué te gustaría conectar.',
+    },
+  };
+
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const MAX_MESSAGE_LENGTH = 1000;
+
+  const form = document.getElementById('contact-form') as HTMLFormElement;
+  const nombreInput = document.getElementById('nombre') as HTMLInputElement;
+  const emailInput = document.getElementById('email') as HTMLInputElement;
+  const tipoSelect = document.getElementById('tipo') as HTMLSelectElement;
+  const empresaField = document.getElementById('empresa-field') as HTMLDivElement;
+  const empresaLabel = document.getElementById('empresa-label') as HTMLLabelElement;
+  const empresaInput = document.getElementById('empresa') as HTMLInputElement;
+  const mensajeTextarea = document.getElementById('mensaje') as HTMLTextAreaElement;
+  const mensajeHint = document.getElementById('mensaje-hint') as HTMLParagraphElement;
+  const charCounter = document.getElementById('char-counter') as HTMLSpanElement;
+  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+  const formStatus = document.getElementById('form-status') as HTMLDivElement;
+
+  const errors = {
+    nombre: document.getElementById('nombre-error') as HTMLSpanElement,
+    email: document.getElementById('email-error') as HTMLSpanElement,
+    tipo: document.getElementById('tipo-error') as HTMLSpanElement,
+    mensaje: document.getElementById('mensaje-error') as HTMLSpanElement,
+  };
+
+  function setFieldError(input: HTMLElement, errorEl: HTMLSpanElement, message: string) {
+    input.classList.toggle('invalid', Boolean(message));
+    errorEl.textContent = message;
+  }
+
+  function clearErrors() {
+    setFieldError(nombreInput, errors.nombre, '');
+    setFieldError(emailInput, errors.email, '');
+    setFieldError(tipoSelect, errors.tipo, '');
+    setFieldError(mensajeTextarea, errors.mensaje, '');
+  }
+
+  function validateClientSide(): boolean {
+    clearErrors();
+    let valid = true;
+
+    if (!nombreInput.value.trim()) {
+      setFieldError(nombreInput, errors.nombre, 'Ingresa tu nombre.');
+      valid = false;
+    }
+
+    if (!emailInput.value.trim()) {
+      setFieldError(emailInput, errors.email, 'Ingresa tu email.');
+      valid = false;
+    } else if (!EMAIL_RE.test(emailInput.value.trim())) {
+      setFieldError(emailInput, errors.email, 'Ingresa un email válido.');
+      valid = false;
+    }
+
+    if (!tipoSelect.value) {
+      setFieldError(tipoSelect, errors.tipo, 'Selecciona una opción.');
+      valid = false;
+    }
+
+    if (!mensajeTextarea.value.trim()) {
+      setFieldError(mensajeTextarea, errors.mensaje, 'Escribe tu mensaje.');
+      valid = false;
+    } else if (mensajeTextarea.value.length > MAX_MESSAGE_LENGTH) {
+      setFieldError(mensajeTextarea, errors.mensaje, `El mensaje no puede superar ${MAX_MESSAGE_LENGTH} caracteres.`);
+      valid = false;
+    }
+
+    return valid;
+  }
+
+  tipoSelect.addEventListener('change', () => {
+    const tipo = tipoSelect.value as Tipo | '';
+    if (!tipo) {
+      empresaField.hidden = true;
+      mensajeHint.hidden = true;
+      return;
+    }
+    const config = TIPO_CONFIG[tipo];
+    empresaField.hidden = false;
+    empresaLabel.textContent = config.empresaLabel;
+    empresaInput.placeholder = config.empresaPlaceholder;
+    mensajeHint.hidden = false;
+    mensajeHint.textContent = config.mensajeHint;
+  });
+
+  mensajeTextarea.addEventListener('input', () => {
+    charCounter.textContent = `${mensajeTextarea.value.length} / ${MAX_MESSAGE_LENGTH}`;
+  });
+
+  function showStatus(kind: 'success' | 'error', title: string, subtitle: string) {
+    formStatus.hidden = false;
+    formStatus.className = `form-status ${kind}`;
+    formStatus.innerHTML = `<p class="status-title">${title}</p><p class="status-subtitle">${subtitle}</p>`;
+  }
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    if (!validateClientSide()) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Enviando...';
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nombre: nombreInput.value.trim(),
+          email: emailInput.value.trim(),
+          tipo: tipoSelect.value,
+          empresa: empresaInput.value.trim(),
+          mensaje: mensajeTextarea.value.trim(),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        showStatus('error', 'No se pudo enviar', data.message ?? 'Ocurrió un error. Intenta de nuevo.');
+        return;
+      }
+
+      showStatus('success', 'Mensaje enviado', 'Te respondo en menos de 24 horas.');
+      form.reset();
+      charCounter.textContent = `0 / ${MAX_MESSAGE_LENGTH}`;
+      empresaField.hidden = true;
+      mensajeHint.hidden = true;
+    } catch {
+      showStatus('error', 'No se pudo enviar', 'Ocurrió un error de red. Intenta de nuevo.');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Enviar mensaje';
+    }
+  });
+</script>

@@ -6,6 +6,8 @@ import CmdK from '../../components/CmdK.tsx';
 import { getCollection, render } from 'astro:content';
 import type { GetStaticPaths } from 'astro';
 
+export const prerender = true;
+
 export const getStaticPaths: GetStaticPaths = async () => {
   const projects = await getCollection('projects');
   return projects.map(p => ({ params: { slug: p.id }, props: { project: p } }));

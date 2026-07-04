@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import CmdK from '../components/CmdK.tsx';
+import ContactForm from '../components/ContactForm.astro';
 import { getCollection } from 'astro:content';
 import {
   Code2, Braces, Cpu, FileCode,
@@ -14,6 +15,8 @@ import {
   TestTube2, GitBranch, MessageSquareCode, RefreshCw,
   Users, LayoutDashboard, PenTool,
 } from 'lucide-react';
+
+export const prerender = true;
 
 const STACK_ICONS: Record<string, any> = {
   // Languages
@@ -299,10 +302,6 @@ const SECTION_SIZES: Record<string, string> = {
         <a href="mailto:carlos.volweides@gmail.com">algo&nbsp;real</a>.
       </h2>
       <div class="contact-grid">
-        <a class="contact-cell" href="mailto:carlos.volweides@gmail.com">
-          <span class="contact-cell-k">Email</span>
-          <span class="contact-cell-v">carlos.volweides@gmail.com</span>
-        </a>
         <a class="contact-cell" href="https://github.com/CarlosVol" target="_blank" rel="noopener">
           <span class="contact-cell-k">GitHub</span>
           <span class="contact-cell-v">@CarlosVol</span>
@@ -310,10 +309,6 @@ const SECTION_SIZES: Record<string, string> = {
         <a class="contact-cell" href="https://linkedin.com/in/carlos-volweides" target="_blank" rel="noopener">
           <span class="contact-cell-k">LinkedIn</span>
           <span class="contact-cell-v">/in/carlos-volweides</span>
-        </a>
-        <a class="contact-cell" href="tel:+584249163070">
-          <span class="contact-cell-k">Phone</span>
-          <span class="contact-cell-v">+58 424 916 3070</span>
         </a>
         <div class="contact-cell">
           <span class="contact-cell-k">Location</span>
@@ -324,6 +319,7 @@ const SECTION_SIZES: Record<string, string> = {
           <span class="contact-cell-v" style="color: var(--accent)">● Open to work</span>
         </div>
       </div>
+      <ContactForm />
     </section>
   </main>
 
