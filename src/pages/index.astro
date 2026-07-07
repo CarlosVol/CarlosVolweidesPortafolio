@@ -282,7 +282,7 @@ const SECTION_SIZES: Record<string, string> = {
               <div class="project-tech">
                 {p.data.stack.map(t => <span>{t}</span>)}
               </div>
-              <a href={`/projects/${p.id}`} class="project-cta">View case study</a>
+              <a href={`/projects/${p.id}`} class="project-cta" aria-label={`View case study: ${p.data.title}`}>View case study</a>
             </div>
             {PROJECT_VISUALS[p.id] && (
               <pre class="project-visual">{PROJECT_VISUALS[p.id]}</pre>

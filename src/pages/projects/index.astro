@@ -40,7 +40,7 @@ const projects = (await getCollection('projects')).sort(
               <div class="project-tech">
                 {p.data.stack.map(t => <span>{t}</span>)}
               </div>
-              <a href={`/projects/${p.id}`} class="project-cta">View case study</a>
+              <a href={`/projects/${p.id}`} class="project-cta" aria-label={`View case study: ${p.data.title}`}>View case study</a>
             </div>
           </article>
         ))}
