@@ -6,7 +6,7 @@ import react from '@astrojs/react';
 import vercel from '@astrojs/vercel';
 
 export default defineConfig({
-  site: 'https://carlosvolweides.dev',
+  site: 'https://carlosvolweides.vercel.app',
   output: 'server',
   adapter: vercel(),
   vite: {
