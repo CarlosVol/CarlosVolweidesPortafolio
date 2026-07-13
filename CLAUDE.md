@@ -6,39 +6,75 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 npm run dev      # dev server at localhost:4321
-npm run build    # static build → dist/
+npm run build    # build → dist/ + .vercel/output/
 npm run preview  # preview the built dist/
 ```
 
 ## Architecture
 
-Astro 6 + TypeScript + Tailwind CSS 4 + React (islands only). Output: static HTML.
+Astro 6 + TypeScript + Tailwind CSS 4 + React (islands only).
+
+`output: 'server'` with the Vercel adapter, but **every page except `/` sets `export const prerender = true`** — the site is effectively static. `/` is server-rendered on purpose (see i18n below).
 
 ```
 src/
 ├── components/
-│   ├── Header.astro     — fixed topbar with scroll-spy nav
+│   ├── Header.astro      — fixed topbar with scroll-spy nav + LangToggle
+│   ├── LangToggle.astro  — ES|EN switch; writes the `lang` cookie on click
 │   ├── Footer.astro
-│   └── CmdK.tsx         — React island (client:load); Cmd+K palette
+│   ├── ContactForm.astro
+│   ├── CmdK.tsx          — React island (client:load); Cmd+K palette
+│   ├── HomePage.astro    — the whole one-pager, takes a `lang` prop
+│   ├── ProjectsPage.astro
+│   └── ProjectPage.astro
+├── i18n/
+│   ├── ui.ts             — es/en dictionaries + SECTIONS (ids ↔ label keys)
+│   └── utils.ts          — useTranslations, localizePath, getProjects, getCmdkItems
 ├── content/
-│   └── projects/        — one .md per project (frontmatter = typed schema)
-├── content.config.ts    — Content Collection schema (glob loader, Astro 5+ API)
+│   └── projects/{es,en}/ — one .md per project per locale (same slugs)
+├── content.config.ts     — Content Collection schema (glob loader)
 ├── layouts/
-│   └── BaseLayout.astro — <head> with SEO, JSON-LD, Google Fonts, global.css import
+│   └── BaseLayout.astro  — <head>: SEO, hreflang, og:locale, JSON-LD, fonts
+├── middleware.ts         — first-visit locale detection
 ├── pages/
-│   ├── index.astro                — full one-pager (Hero → Contact)
-│   └── projects/
-│       ├── index.astro            — all projects grid
-│       └── [slug].astro           — individual project case study
+│   ├── index.astro                — prerender = false (see i18n)
+│   ├── projects/{index,[slug]}.astro
+│   ├── en/index.astro
+│   ├── en/projects/{index,[slug]}.astro
+│   └── api/contact.ts             — prerender = false
 └── styles/
-    └── global.css       — CSS vars design system + all component styles
+    └── global.css        — CSS vars design system + all component styles
 ```
+
+Pages are thin wrappers: they set `lang` and render the matching `*Page.astro` component. Adding a locale means adding a dictionary in `i18n/ui.ts`, a content folder, and a page wrapper.
+
+## i18n
+
+Spanish is the default locale and lives at the root (`/`, `/projects`, `/projects/<slug>`). English lives under `/en`. Configured via Astro's native `i18n` block with `prefixDefaultLocale: false`.
+
+**All user-facing copy lives in `src/i18n/ui.ts`.** `es` is the source of truth for the shape — `en` is typed as `Dict`, so a missing key fails the build. Never hardcode a string in a component.
+
+Things that are deliberately **not** translated: `STACK[].items` (they double as `STACK_ICONS` keys), section ids (`home`/`about`/`stack`/`work`/`projects`/`contact`), the `status` enum, and the ASCII art in `PROJECT_VISUALS` (hand-tuned column widths).
+
+Client-side code can't read Astro frontmatter, so strings are injected: `<script define:vars={{ i18n }}>` in `ContactForm.astro` and `HomePage.astro`, and props for the `CmdK` island (`getCmdkItems(lang)`).
+
+### Why `/` is server-rendered
+
+Vercel serves prerendered files straight off the filesystem — its route config puts `{"handle": "filesystem"}` ahead of every middleware route. A static `/` would therefore **never reach `src/middleware.ts`**, and locale detection would silently no-op in production while working fine in `npm run dev`. Setting `prerender = false` on `src/pages/index.astro` is what puts `/` behind the middleware. Don't "optimize" it back to static without replacing the detection mechanism.
+
+Detection order (first visit only, `/` only): `lang` cookie → `Accept-Language` → `x-vercel-ip-country`. Redirects are 302 with `Vary`, and known crawler user-agents are skipped so both locales get indexed. A manual `LangToggle` click writes the cookie, which outranks detection from then on.
 
 ## Content
 
-**To edit portfolio content** (bio, experience, stack): edit the data constants at the top of `src/pages/index.astro` (`STACK`, `EXPERIENCE`, `PROJECT_VISUALS`, `SECTION_SIZES`).
+**Portfolio copy** (bio, experience, stack): `src/i18n/ui.ts`. Layout-only constants (`PROJECT_VISUALS`, `SECTION_SIZES`, `STACK_ICONS`) are at the top of `src/components/HomePage.astro`.
 
-**To add/edit a project**: edit or create `src/content/projects/<slug>.md`. Fields defined in `src/content.config.ts`. The `idx` field controls sort order and display numbering.
+**To add/edit a project**: edit `src/content/projects/<lang>/<slug>.md` — the same slug must exist in **both** `es/` and `en/`. Fields are defined in `src/content.config.ts`. The `idx` field controls sort order and display numbering.
+
+`getProjects(lang)` (in `src/i18n/utils.ts`) filters the collection by the locale prefix in the entry `id` and exposes a clean `slug`. Always use it — a bare `getCollection('projects')` returns all six files across both locales and inflates the project counter.
+
+## Contact form
+
+`src/pages/api/contact.ts` is language-agnostic: it answers with a machine-readable `{ code }` (e.g. `EMAIL_INVALID`), never prose. The copy for each code lives under `form.errors` in `src/i18n/ui.ts` and is resolved client-side. The notification email itself stays in Spanish — it goes to Carlos, not the visitor.
 
 ## Design system
 
@@ -53,18 +89,18 @@ All colors and spacing live in CSS custom properties in `src/styles/global.css`:
 
 ## Interactivity
 
-- **Scroll spy** and **reveal animation** (`class="reveal"` → `class="reveal in"`) run as vanilla JS `<script>` blocks inside Astro pages.
-- **Local time** (Caracas VET) is a vanilla JS interval in `index.astro`, no React needed.
-- **CmdK** is the only React island; imported with `<CmdK client:load />`.
+- **Scroll spy** (`Header.astro`) and **reveal animation** (`class="reveal"` → `class="reveal in"`) are vanilla JS `<script>` blocks. Scroll spy keys off section ids, so it is locale-independent.
+- **Local time** (Caracas VET) is a vanilla JS interval in `HomePage.astro`, formatted with the active locale.
+- **CmdK** is the only React island. It receives fully localized `items` and `labels` as props.
 
 ## AI-friendly files
 
 - `public/llms.txt` — plain-text description of the site and author for LLM crawlers
 - `public/robots.txt` — explicit allow for GPTBot, anthropic-ai, Claude-Web
 - JSON-LD `Person` schema is inlined in `BaseLayout.astro`
-- Sitemap auto-generated by `@astrojs/sitemap` at build time → `dist/sitemap-index.xml`
+- Sitemap auto-generated by `@astrojs/sitemap` with `xhtml:link` alternates → `dist/client/sitemap-index.xml`
 
 ## Deploy
 
-Vercel. `output: 'static'` in `astro.config.mjs`. Push to `main` → auto-deploy.
-Update `site` in `astro.config.mjs` if the domain changes.
+Vercel. Push to `main` → auto-deploy.
+Update `site` in `astro.config.mjs` if the domain changes — `robots.txt` and the JSON-LD `url` derive from it.

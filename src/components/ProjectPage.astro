@@ -1,0 +1,105 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import CmdK from './CmdK.tsx';
+import { render } from 'astro:content';
+import type { Lang } from '../i18n/ui';
+import { useTranslations, localizePath, getCmdkItems, type LocalizedProject } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+  project: LocalizedProject;
+}
+
+const { lang, project } = Astro.props;
+const t = useTranslations(lang);
+const { Content } = await render(project);
+---
+
+<BaseLayout
+  lang={lang}
+  title={`${project.data.title} — Carlos Volweides`}
+  description={project.data.description}
+>
+  <div class="bg-grid"></div>
+  <div class="bg-noise"></div>
+
+  <Header lang={lang} />
+
+  <main>
+    <section style="padding-top: 140px;">
+      <div class="section-label">
+        <a
+          href={localizePath(lang, '/projects')}
+          style="color: var(--fg-dim); transition: color 0.15s;"
+          onmouseenter="this.style.color='var(--fg)'"
+          onmouseleave="this.style.color='var(--fg-dim)'"
+        >{t.projects.back}</a>
+        <span>/</span>
+        <span class="idx">{project.data.idx}</span>
+        <span>{project.data.title.toLowerCase()}</span>
+      </div>
+
+      <div class="project-detail reveal">
+        <h1>{project.data.title}</h1>
+
+        <div class="meta-row">
+          <span>
+            <span style="color: var(--fg-dim); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em;">{t.projects.role}</span>
+            &nbsp; {project.data.role}
+          </span>
+          <span class={`status-tag ${project.data.status === 'live' ? 'live' : ''}`} style="align-self: center;">
+            {project.data.statusLabel}
+          </span>
+        </div>
+
+        <div class="project-tech" style="margin-bottom: 48px;">
+          {project.data.stack.map(s => <span>{s}</span>)}
+        </div>
+
+        <div class="prose">
+          <Content />
+        </div>
+
+        {(project.data.demoUrl || project.data.repoUrl) && (
+          <div style="display: flex; gap: 12px; margin-top: 48px; flex-wrap: wrap;">
+            {project.data.demoUrl && (
+              <a href={project.data.demoUrl} target="_blank" rel="noopener" class="btn primary">
+                {t.projects.demo} <span class="arrow">↗</span>
+              </a>
+            )}
+            {project.data.repoUrl && (
+              <a href={project.data.repoUrl} target="_blank" rel="noopener" class="btn">
+                {t.projects.repo} <span class="arrow">↗</span>
+              </a>
+            )}
+          </div>
+        )}
+
+        <div style="margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);">
+          <a href="mailto:carlos.volweides@gmail.com" class="btn primary">
+            {t.projects.requestCase} <span class="arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer lang={lang} />
+  <CmdK client:load items={getCmdkItems(lang)} labels={t.cmdk} />
+</BaseLayout>
+
+<script>
+  const els = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
+  const check = () => {
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    els.forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (r.top < vh * 0.9 && r.bottom > 0) el.classList.add('in');
+    });
+  };
+  check();
+  window.addEventListener('scroll', check, { passive: true });
+  setTimeout(() => els.forEach(el => el.classList.add('in')), 1500);
+</script>

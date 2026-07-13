@@ -1,0 +1,50 @@
+---
+import type { Lang } from '../i18n/ui';
+import { useTranslations, alternatePath } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+// Same page, other language. The cookie is written on click so a manual choice
+// always outranks the middleware's Accept-Language detection on later visits.
+const href = alternatePath(lang, Astro.url.pathname);
+const other: Lang = lang === 'es' ? 'en' : 'es';
+---
+
+<a class="lang-toggle" href={href} data-lang={other} aria-label={t.header.switchTo}>
+  <span class:list={['lang-opt', { active: lang === 'es' }]}>ES</span>
+  <span class="lang-sep">/</span>
+  <span class:list={['lang-opt', { active: lang === 'en' }]}>EN</span>
+</a>
+
+<style>
+  .lang-toggle {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-dim);
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    padding: 2px 7px;
+    transition: border-color 0.15s;
+  }
+  .lang-toggle:hover { border-color: var(--fg-dim); }
+  .lang-sep { color: var(--line-strong); }
+  .lang-opt.active { color: var(--accent); }
+</style>
+
+<script>
+  const toggle = document.querySelector<HTMLAnchorElement>('.lang-toggle');
+  toggle?.addEventListener('click', () => {
+    const lang = toggle.dataset.lang;
+    if (lang) {
+      document.cookie = `lang=${lang}; path=/; max-age=31536000; SameSite=Lax`;
+    }
+  });
+</script>

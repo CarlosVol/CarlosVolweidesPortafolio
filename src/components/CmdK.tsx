@@ -1,33 +1,32 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 
-const SECTIONS = [
-  { id: 'home',     label: 'index',      num: '00' },
-  { id: 'about',    label: 'about',      num: '01' },
-  { id: 'stack',    label: 'stack',      num: '02' },
-  { id: 'work',     label: 'experience', num: '03' },
-  { id: 'projects', label: 'projects',   num: '04' },
-  { id: 'contact',  label: 'contact',    num: '05' },
-];
+export type CmdkItem = { label: string; hint: string; href: string };
 
-type Item = { kind: string; label: string; hint: string; href: string };
+export type CmdkLabels = {
+  placeholder: string;
+  noResults: string;
+  navigate: string;
+  select: string;
+  close: string;
+};
 
-export default function CmdK() {
+interface Props {
+  items: CmdkItem[];
+  labels: CmdkLabels;
+}
+
+const trimSlash = (path: string) => path.replace(/\/+$/, '');
+
+export default function CmdK({ items: allItems, labels }: Props) {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState('');
   const [idx, setIdx] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const items: Item[] = useMemo(() => {
-    const all: Item[] = [
-      ...SECTIONS.map(s => ({ kind: 'nav', label: `Go to ${s.label}`, hint: s.num, href: `/#${s.id}` })),
-      { kind: 'action', label: 'Send email',    hint: 'mail', href: 'mailto:carlos.volweides@gmail.com' },
-      { kind: 'action', label: 'Open GitHub',   hint: 'gh',   href: 'https://github.com/CarlosVol' },
-      { kind: 'action', label: 'Open LinkedIn', hint: 'in',   href: 'https://linkedin.com/in/carlos-volweides' },
-      { kind: 'nav',    label: 'All projects',  hint: '04',   href: '/projects' },
-    ];
-    if (!q) return all;
-    return all.filter(i => i.label.toLowerCase().includes(q.toLowerCase()));
-  }, [q]);
+  const items = useMemo(() => {
+    if (!q) return allItems;
+    return allItems.filter(i => i.label.toLowerCase().includes(q.toLowerCase()));
+  }, [q, allItems]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -53,14 +52,20 @@ export default function CmdK() {
 
   useEffect(() => { setIdx(0); }, [q]);
 
-  const navigate = (item: Item) => {
-    if (item.href.startsWith('#') || item.href.startsWith('/#')) {
-      const sectionId = item.href.replace('/#', '');
-      document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
-    } else if (item.href.startsWith('mailto')) {
+  const navigate = (item: CmdkItem) => {
+    if (item.href.startsWith('mailto')) {
       window.location.href = item.href;
     } else if (item.href.startsWith('http')) {
       window.open(item.href, '_blank', 'noopener');
+    } else if (item.href.includes('#')) {
+      // Section anchors only scroll when we are already on the page that owns
+      // them — from /projects or another locale we have to navigate instead.
+      const [path, hash] = item.href.split('#');
+      if (trimSlash(path) === trimSlash(window.location.pathname)) {
+        document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        window.location.href = item.href;
+      }
     } else {
       window.location.href = item.href;
     }
@@ -82,14 +87,14 @@ export default function CmdK() {
         <input
           ref={inputRef}
           className="cmdk-input"
-          placeholder="$ search nav · projects · contact..."
+          placeholder={labels.placeholder}
           value={q}
           onChange={e => setQ(e.target.value)}
           onKeyDown={onKey}
         />
         <div className="cmdk-list">
           {items.length === 0 && (
-            <div className="cmdk-item" style={{ color: 'var(--fg-dim)' }}>no results</div>
+            <div className="cmdk-item" style={{ color: 'var(--fg-dim)' }}>{labels.noResults}</div>
           )}
           {items.map((it, i) => (
             <div
@@ -105,9 +110,9 @@ export default function CmdK() {
           ))}
         </div>
         <div className="cmdk-foot">
-          <span><kbd>↑↓</kbd>navigate</span>
-          <span><kbd>↵</kbd>select</span>
-          <span><kbd>esc</kbd>close</span>
+          <span><kbd>↑↓</kbd>{labels.navigate}</span>
+          <span><kbd>↵</kbd>{labels.select}</span>
+          <span><kbd>esc</kbd>{labels.close}</span>
         </div>
       </div>
     </div>

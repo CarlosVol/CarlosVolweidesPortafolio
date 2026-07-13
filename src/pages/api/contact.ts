@@ -6,6 +6,22 @@ export const prerender = false;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_MESSAGE_LENGTH = 1000;
 
+/**
+ * The visitor-facing copy lives in the client dictionary (src/i18n/ui.ts), keyed
+ * by these codes. The API stays language-agnostic.
+ */
+type ErrorCode =
+  | 'NAME_REQUIRED'
+  | 'EMAIL_REQUIRED'
+  | 'EMAIL_INVALID'
+  | 'TIPO_INVALID'
+  | 'MESSAGE_REQUIRED'
+  | 'MESSAGE_TOO_LONG'
+  | 'BAD_JSON'
+  | 'SERVER_ERROR'
+  | 'SEND_FAILED';
+
+// The notification email is always in Spanish — it goes to Carlos, not the visitor.
 const TIPO_LABELS: Record<string, string> = {
   trabajo: 'Oferta de trabajo',
   freelance: 'Proyecto freelance',
@@ -18,6 +34,14 @@ interface ContactBody {
   tipo: string;
   empresa: string;
   mensaje: string;
+  lang: string;
+}
+
+function fail(code: ErrorCode, status: number): Response {
+  return new Response(JSON.stringify({ code }), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  });
 }
 
 function escapeHtml(value: string): string {
@@ -29,13 +53,13 @@ function escapeHtml(value: string): string {
     .replace(/'/g, '&#39;');
 }
 
-function validate(body: Partial<ContactBody>): string | null {
-  if (!body.nombre?.trim()) return 'El nombre es obligatorio.';
-  if (!body.email?.trim()) return 'El email es obligatorio.';
-  if (!EMAIL_RE.test(body.email.trim())) return 'El email no tiene un formato válido.';
-  if (!body.tipo || !(body.tipo in TIPO_LABELS)) return 'Selecciona un motivo de contacto válido.';
-  if (!body.mensaje?.trim()) return 'El mensaje es obligatorio.';
-  if (body.mensaje.length > MAX_MESSAGE_LENGTH) return `El mensaje no puede superar ${MAX_MESSAGE_LENGTH} caracteres.`;
+function validate(body: Partial<ContactBody>): ErrorCode | null {
+  if (!body.nombre?.trim()) return 'NAME_REQUIRED';
+  if (!body.email?.trim()) return 'EMAIL_REQUIRED';
+  if (!EMAIL_RE.test(body.email.trim())) return 'EMAIL_INVALID';
+  if (!body.tipo || !(body.tipo in TIPO_LABELS)) return 'TIPO_INVALID';
+  if (!body.mensaje?.trim()) return 'MESSAGE_REQUIRED';
+  if (body.mensaje.length > MAX_MESSAGE_LENGTH) return 'MESSAGE_TOO_LONG';
   return null;
 }
 
@@ -45,6 +69,7 @@ function buildEmailHtml(body: ContactBody): string {
   const empresa = body.empresa.trim() ? escapeHtml(body.empresa.trim()) : '';
   const mensaje = escapeHtml(body.mensaje.trim());
   const tipoLabel = TIPO_LABELS[body.tipo];
+  const idioma = body.lang === 'en' ? 'Inglés' : 'Español';
 
   return `
     <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto;">
@@ -69,6 +94,10 @@ function buildEmailHtml(body: ContactBody): string {
           <td style="padding: 6px 0; color: #5a5a63;">Empresa</td>
           <td style="padding: 6px 0; color: #1a1a1a;">${empresa}</td>
         </tr>` : ''}
+        <tr>
+          <td style="padding: 6px 0; color: #5a5a63;">Idioma</td>
+          <td style="padding: 6px 0; color: #1a1a1a;">${idioma}</td>
+        </tr>
       </table>
       <div style="margin-top: 20px; padding: 16px; background: #f5f5f5; border-radius: 8px; white-space: pre-wrap; font-size: 14px; color: #1a1a1a;">${mensaje}</div>
       <p style="margin-top: 24px; font-size: 12px; color: #8a8a93;">
@@ -83,19 +112,13 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     raw = await request.json();
   } catch {
-    return new Response(JSON.stringify({ message: 'El cuerpo de la petición no es JSON válido.' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return fail('BAD_JSON', 400);
   }
 
   const body = raw as Partial<ContactBody>;
   const validationError = validate(body);
   if (validationError) {
-    return new Response(JSON.stringify({ message: validationError }), {
-      status: 422,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return fail(validationError, 422);
   }
 
   const contactBody: ContactBody = {
@@ -104,6 +127,7 @@ export const POST: APIRoute = async ({ request }) => {
     tipo: body.tipo!,
     empresa: body.empresa?.trim() ?? '',
     mensaje: body.mensaje!.trim(),
+    lang: body.lang === 'en' ? 'en' : 'es',
   };
 
   const apiKey = import.meta.env.RESEND_API_KEY;
@@ -111,10 +135,7 @@ export const POST: APIRoute = async ({ request }) => {
   const from = import.meta.env.CONTACT_FROM_EMAIL ?? 'onboarding@resend.dev';
 
   if (!apiKey || !to) {
-    return new Response(JSON.stringify({ message: 'Error interno del servidor.' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return fail('SERVER_ERROR', 500);
   }
 
   try {
@@ -128,20 +149,14 @@ export const POST: APIRoute = async ({ request }) => {
     });
 
     if (error) {
-      return new Response(JSON.stringify({ message: 'No se pudo enviar el mensaje. Intenta de nuevo.' }), {
-        status: 502,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return fail('SEND_FAILED', 502);
     }
 
-    return new Response(JSON.stringify({ message: 'Mensaje enviado.' }), {
+    return new Response(JSON.stringify({ ok: true }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
   } catch {
-    return new Response(JSON.stringify({ message: 'No se pudo enviar el mensaje. Intenta de nuevo.' }), {
-      status: 502,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return fail('SEND_FAILED', 502);
   }
 };

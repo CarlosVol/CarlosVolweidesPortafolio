@@ -1,29 +1,57 @@
 ---
 import '../styles/global.css';
+import { DEFAULT_LANG, LOCALE_TAG, type Lang } from '../i18n/ui';
+import { useTranslations, localizePath, stripLangPrefix } from '../i18n/utils';
 
 interface Props {
+  lang: Lang;
   title?: string;
   description?: string;
   ogImage?: string;
 }
 
-const {
-  title = 'Carlos Volweides — Fullstack Engineer',
-  description = 'Fullstack Engineer specializing in TypeScript, React, Next.js, Python (FastAPI), clean architecture, DDD, and LLM/RAG integration. Based in Caracas, Venezuela.',
-  ogImage = '/og-image.png',
-} = Astro.props;
+const { lang, title, description, ogImage = '/og-image.png' } = Astro.props;
+const t = useTranslations(lang);
+
+const pageTitle = title ?? t.seo.homeTitle;
+const pageDescription = description ?? t.seo.homeDescription;
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
+
+// hreflang needs one URL per locale for the same logical page.
+const basePath = stripLangPrefix(Astro.url.pathname);
+const alternates = (['es', 'en'] as const).map((l) => ({
+  lang: l,
+  href: new URL(localizePath(l, basePath), Astro.site).href,
+}));
+const xDefault = new URL(localizePath(DEFAULT_LANG, basePath), Astro.site).href;
+
+const otherLang: Lang = lang === 'es' ? 'en' : 'es';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Carlos Volweides',
+  jobTitle: t.seo.jobTitle,
+  email: 'carlos.volweides@gmail.com',
+  url: Astro.site?.href,
+  address: { '@type': 'PostalAddress', addressLocality: 'Caracas', addressCountry: 'VE' },
+  sameAs: ['https://github.com/CarlosVol', 'https://linkedin.com/in/carlos-volweides'],
+};
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
     <link rel="canonical" href={canonical} />
+
+    <!-- Alternate locales -->
+    {alternates.map(a => <link rel="alternate" hreflang={a.lang} href={a.href} />)}
+    <link rel="alternate" hreflang="x-default" href={xDefault} />
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -35,32 +63,20 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
     <meta property="og:image" content={new URL(ogImage, Astro.site)} />
+    <meta property="og:locale" content={LOCALE_TAG[lang].replace('-', '_')} />
+    <meta property="og:locale:alternate" content={LOCALE_TAG[otherLang].replace('-', '_')} />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
     <meta name="twitter:image" content={new URL(ogImage, Astro.site)} />
 
     <!-- JSON-LD -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Person",
-        "name": "Carlos Volweides",
-        "jobTitle": "Fullstack Engineer",
-        "email": "carlos.volweides@gmail.com",
-        "url": "https://carlosvolweides.dev",
-        "address": { "@type": "PostalAddress", "addressLocality": "Caracas", "addressCountry": "VE" },
-        "sameAs": [
-          "https://github.com/CarlosVol",
-          "https://linkedin.com/in/carlos-volweides"
-        ]
-      }
-    </script>
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

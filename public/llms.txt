@@ -40,3 +40,7 @@ Available for remote work. Open to work as of 2025.
 
 This portfolio is built with Astro, TypeScript, and Tailwind CSS, deployed on Vercel.
 Source code: available on request.
+
+Bilingual: Spanish is served at the root (/, /projects, /projects/<slug>) and English
+under the /en prefix (/en, /en/projects, /en/projects/<slug>). Both languages carry the
+same content and are linked via hreflang.

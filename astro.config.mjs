@@ -8,9 +8,24 @@ import vercel from '@astrojs/vercel';
 export default defineConfig({
   site: 'https://carlosvolweides.vercel.app',
   output: 'server',
-  adapter: vercel(),
+  // edgeMiddleware puts src/middleware.ts in front of the prerendered pages.
+  // Without it the locale redirect never runs in production.
+  adapter: vercel({ edgeMiddleware: true }),
+  i18n: {
+    locales: ['es', 'en'],
+    defaultLocale: 'es',
+    routing: { prefixDefaultLocale: false },
+  },
   vite: {
     plugins: [tailwindcss()],
   },
-  integrations: [sitemap(), react()],
+  integrations: [
+    sitemap({
+      i18n: {
+        defaultLocale: 'es',
+        locales: { es: 'es-VE', en: 'en-US' },
+      },
+    }),
+    react(),
+  ],
 });

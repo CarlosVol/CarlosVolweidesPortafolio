@@ -1,48 +1,71 @@
 ---
+import type { Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const f = t.form;
+
+const MAX_MESSAGE_LENGTH = 1000;
+
+// Handed to the client script below via define:vars — inline scripts can't read
+// component frontmatter on their own.
+const i18n = {
+  tipos: f.tipos,
+  validation: f.validation,
+  status: f.status,
+  errors: f.errors,
+  submit: f.submit,
+  submitting: f.submitting,
+};
 ---
 
 <div class="contact-form-wrap">
   <form id="contact-form" class="contact-form" novalidate>
     <div class="form-row">
       <div class="field">
-        <label for="nombre">Nombre</label>
+        <label for="nombre">{f.name}</label>
         <input id="nombre" name="nombre" type="text" autocomplete="name" required />
         <span class="field-error" id="nombre-error" aria-live="polite"></span>
       </div>
       <div class="field">
-        <label for="email">Email</label>
+        <label for="email">{f.email}</label>
         <input id="email" name="email" type="email" autocomplete="email" required />
         <span class="field-error" id="email-error" aria-live="polite"></span>
       </div>
     </div>
 
     <div class="field">
-      <label for="tipo">Motivo</label>
+      <label for="tipo">{f.reason}</label>
       <select id="tipo" name="tipo" required>
-        <option value="" disabled selected>Selecciona una opción</option>
-        <option value="trabajo">Oferta de trabajo</option>
-        <option value="freelance">Proyecto freelance</option>
-        <option value="networking">Networking / Otro</option>
+        <option value="" disabled selected>{f.selectOption}</option>
+        <option value="trabajo">{f.tipoTrabajo}</option>
+        <option value="freelance">{f.tipoFreelance}</option>
+        <option value="networking">{f.tipoNetworking}</option>
       </select>
       <span class="field-error" id="tipo-error" aria-live="polite"></span>
     </div>
 
     <div class="field" id="empresa-field" hidden>
-      <label for="empresa" id="empresa-label">Empresa</label>
+      <label for="empresa" id="empresa-label">{f.company}</label>
       <input id="empresa" name="empresa" type="text" />
     </div>
 
     <div class="field">
-      <label for="mensaje">Mensaje</label>
-      <textarea id="mensaje" name="mensaje" rows="5" maxlength="1000" required></textarea>
+      <label for="mensaje">{f.message}</label>
+      <textarea id="mensaje" name="mensaje" rows="5" maxlength={MAX_MESSAGE_LENGTH} required></textarea>
       <p class="mensaje-hint" id="mensaje-hint" hidden></p>
       <div class="mensaje-meta">
         <span class="field-error" id="mensaje-error" aria-live="polite"></span>
-        <span class="char-counter" id="char-counter" aria-live="polite">0 / 1000</span>
+        <span class="char-counter" id="char-counter" aria-live="polite">0 / {MAX_MESSAGE_LENGTH}</span>
       </div>
     </div>
 
-    <button type="submit" id="submit-btn" class="btn primary form-submit">Enviar mensaje</button>
+    <button type="submit" id="submit-btn" class="btn primary form-submit">{f.submit}</button>
 
     <div id="form-status" class="form-status" role="alert" hidden></div>
   </form>
@@ -194,51 +217,33 @@
   }
 </style>
 
-<script>
-  type Tipo = 'trabajo' | 'freelance' | 'networking';
-
-  const TIPO_CONFIG: Record<Tipo, { empresaLabel: string; empresaPlaceholder: string; mensajeHint: string }> = {
-    trabajo: {
-      empresaLabel: 'Empresa que contrata',
-      empresaPlaceholder: 'Ej: Google, startup, agencia...',
-      mensajeHint: 'Ej: empresa, stack tecnológico, modalidad (remoto/híbrido) y rango salarial si puedes compartirlo.',
-    },
-    freelance: {
-      empresaLabel: 'Tu empresa o proyecto',
-      empresaPlaceholder: 'Ej: Mi startup, Proyecto X...',
-      mensajeHint: 'Ej: descripción del proyecto, stack preferido, timeline aproximado y presupuesto.',
-    },
-    networking: {
-      empresaLabel: 'Empresa u organización',
-      empresaPlaceholder: 'Opcional',
-      mensajeHint: 'Cuéntame sobre ti o en qué te gustaría conectar.',
-    },
-  };
-
+<script define:vars={{ i18n, lang, MAX_MESSAGE_LENGTH }}>
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const MAX_MESSAGE_LENGTH = 1000;
 
-  const form = document.getElementById('contact-form') as HTMLFormElement;
-  const nombreInput = document.getElementById('nombre') as HTMLInputElement;
-  const emailInput = document.getElementById('email') as HTMLInputElement;
-  const tipoSelect = document.getElementById('tipo') as HTMLSelectElement;
-  const empresaField = document.getElementById('empresa-field') as HTMLDivElement;
-  const empresaLabel = document.getElementById('empresa-label') as HTMLLabelElement;
-  const empresaInput = document.getElementById('empresa') as HTMLInputElement;
-  const mensajeTextarea = document.getElementById('mensaje') as HTMLTextAreaElement;
-  const mensajeHint = document.getElementById('mensaje-hint') as HTMLParagraphElement;
-  const charCounter = document.getElementById('char-counter') as HTMLSpanElement;
-  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
-  const formStatus = document.getElementById('form-status') as HTMLDivElement;
+  const fmt = (template, params) =>
+    template.replace(/\{(\w+)\}/g, (m, key) => (key in params ? String(params[key]) : m));
+
+  const form = document.getElementById('contact-form');
+  const nombreInput = document.getElementById('nombre');
+  const emailInput = document.getElementById('email');
+  const tipoSelect = document.getElementById('tipo');
+  const empresaField = document.getElementById('empresa-field');
+  const empresaLabel = document.getElementById('empresa-label');
+  const empresaInput = document.getElementById('empresa');
+  const mensajeTextarea = document.getElementById('mensaje');
+  const mensajeHint = document.getElementById('mensaje-hint');
+  const charCounter = document.getElementById('char-counter');
+  const submitBtn = document.getElementById('submit-btn');
+  const formStatus = document.getElementById('form-status');
 
   const errors = {
-    nombre: document.getElementById('nombre-error') as HTMLSpanElement,
-    email: document.getElementById('email-error') as HTMLSpanElement,
-    tipo: document.getElementById('tipo-error') as HTMLSpanElement,
-    mensaje: document.getElementById('mensaje-error') as HTMLSpanElement,
+    nombre: document.getElementById('nombre-error'),
+    email: document.getElementById('email-error'),
+    tipo: document.getElementById('tipo-error'),
+    mensaje: document.getElementById('mensaje-error'),
   };
 
-  function setFieldError(input: HTMLElement, errorEl: HTMLSpanElement, message: string) {
+  function setFieldError(input, errorEl, message) {
     input.classList.toggle('invalid', Boolean(message));
     errorEl.textContent = message;
   }
@@ -250,33 +255,38 @@
     setFieldError(mensajeTextarea, errors.mensaje, '');
   }
 
-  function validateClientSide(): boolean {
+  function validateClientSide() {
     clearErrors();
     let valid = true;
+    const v = i18n.validation;
 
     if (!nombreInput.value.trim()) {
-      setFieldError(nombreInput, errors.nombre, 'Ingresa tu nombre.');
+      setFieldError(nombreInput, errors.nombre, v.nameRequired);
       valid = false;
     }
 
     if (!emailInput.value.trim()) {
-      setFieldError(emailInput, errors.email, 'Ingresa tu email.');
+      setFieldError(emailInput, errors.email, v.emailRequired);
       valid = false;
     } else if (!EMAIL_RE.test(emailInput.value.trim())) {
-      setFieldError(emailInput, errors.email, 'Ingresa un email válido.');
+      setFieldError(emailInput, errors.email, v.emailInvalid);
       valid = false;
     }
 
     if (!tipoSelect.value) {
-      setFieldError(tipoSelect, errors.tipo, 'Selecciona una opción.');
+      setFieldError(tipoSelect, errors.tipo, v.tipoRequired);
       valid = false;
     }
 
     if (!mensajeTextarea.value.trim()) {
-      setFieldError(mensajeTextarea, errors.mensaje, 'Escribe tu mensaje.');
+      setFieldError(mensajeTextarea, errors.mensaje, v.messageRequired);
       valid = false;
     } else if (mensajeTextarea.value.length > MAX_MESSAGE_LENGTH) {
-      setFieldError(mensajeTextarea, errors.mensaje, `El mensaje no puede superar ${MAX_MESSAGE_LENGTH} caracteres.`);
+      setFieldError(
+        mensajeTextarea,
+        errors.mensaje,
+        fmt(v.messageTooLong, { max: MAX_MESSAGE_LENGTH })
+      );
       valid = false;
     }
 
@@ -284,28 +294,41 @@
   }
 
   tipoSelect.addEventListener('change', () => {
-    const tipo = tipoSelect.value as Tipo | '';
+    const tipo = tipoSelect.value;
     if (!tipo) {
       empresaField.hidden = true;
       mensajeHint.hidden = true;
       return;
     }
-    const config = TIPO_CONFIG[tipo];
+    const config = i18n.tipos[tipo];
     empresaField.hidden = false;
-    empresaLabel.textContent = config.empresaLabel;
-    empresaInput.placeholder = config.empresaPlaceholder;
+    empresaLabel.textContent = config.companyLabel;
+    empresaInput.placeholder = config.companyPlaceholder;
     mensajeHint.hidden = false;
-    mensajeHint.textContent = config.mensajeHint;
+    mensajeHint.textContent = config.messageHint;
   });
 
   mensajeTextarea.addEventListener('input', () => {
     charCounter.textContent = `${mensajeTextarea.value.length} / ${MAX_MESSAGE_LENGTH}`;
   });
 
-  function showStatus(kind: 'success' | 'error', title: string, subtitle: string) {
+  function showStatus(kind, title, subtitle) {
     formStatus.hidden = false;
     formStatus.className = `form-status ${kind}`;
-    formStatus.innerHTML = `<p class="status-title">${title}</p><p class="status-subtitle">${subtitle}</p>`;
+    formStatus.replaceChildren();
+    const titleEl = document.createElement('p');
+    titleEl.className = 'status-title';
+    titleEl.textContent = title;
+    const subtitleEl = document.createElement('p');
+    subtitleEl.className = 'status-subtitle';
+    subtitleEl.textContent = subtitle;
+    formStatus.append(titleEl, subtitleEl);
+  }
+
+  /** The API answers with a machine-readable `code`; the copy lives here. */
+  function messageForCode(code) {
+    const template = i18n.errors[code] ?? i18n.errors.UNKNOWN;
+    return fmt(template, { max: MAX_MESSAGE_LENGTH });
   }
 
   form.addEventListener('submit', async (event) => {
@@ -314,7 +337,7 @@
     if (!validateClientSide()) return;
 
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Enviando...';
+    submitBtn.textContent = i18n.submitting;
 
     try {
       const response = await fetch('/api/contact', {
@@ -326,26 +349,27 @@
           tipo: tipoSelect.value,
           empresa: empresaInput.value.trim(),
           mensaje: mensajeTextarea.value.trim(),
+          lang,
         }),
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        showStatus('error', 'No se pudo enviar', data.message ?? 'Ocurrió un error. Intenta de nuevo.');
+        showStatus('error', i18n.status.errorTitle, messageForCode(data.code));
         return;
       }
 
-      showStatus('success', 'Mensaje enviado', 'Te respondo en menos de 24 horas.');
+      showStatus('success', i18n.status.successTitle, i18n.status.successSubtitle);
       form.reset();
       charCounter.textContent = `0 / ${MAX_MESSAGE_LENGTH}`;
       empresaField.hidden = true;
       mensajeHint.hidden = true;
     } catch {
-      showStatus('error', 'No se pudo enviar', 'Ocurrió un error de red. Intenta de nuevo.');
+      showStatus('error', i18n.status.errorTitle, i18n.status.networkError);
     } finally {
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Enviar mensaje';
+      submitBtn.textContent = i18n.submit;
     }
   });
 </script>

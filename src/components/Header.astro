@@ -1,32 +1,46 @@
 ---
-const SECTIONS = [
-  { id: 'home',     label: 'index',      num: '00' },
-  { id: 'about',    label: 'about',      num: '01' },
-  { id: 'stack',    label: 'stack',      num: '02' },
-  { id: 'work',     label: 'experience', num: '03' },
-  { id: 'projects', label: 'projects',   num: '04' },
-  { id: 'contact',  label: 'contact',    num: '05' },
-];
+import LangToggle from './LangToggle.astro';
+import { SECTIONS, type Lang } from '../i18n/ui';
+import { useTranslations, localizePath } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const home = localizePath(lang, '/');
 ---
 
 <header class="topbar" id="topbar">
   <div class="topbar-left">
     <span class="status-dot"></span>
     <span>carlos.volweides</span>
-    <span style="color: var(--fg-dim)">/ available for work</span>
+    <span style="color: var(--fg-dim)">{t.header.available}</span>
   </div>
   <nav class="topbar-nav">
     {SECTIONS.map(s => (
-      <a href={`/#${s.id}`} data-section={s.id}>
+      <a href={`${home}#${s.id}`} data-section={s.id}>
         <span class="num">{s.num}</span>
-        {s.label}
+        {t.nav[s.key]}
       </a>
     ))}
   </nav>
-  <button class="cmdk-hint" id="cmdk-trigger" aria-label="Open command palette">
-    <kbd>⌘</kbd><kbd>K</kbd>
-  </button>
+  <div class="topbar-right">
+    <LangToggle lang={lang} />
+    <button class="cmdk-hint" id="cmdk-trigger" aria-label={t.header.cmdk}>
+      <kbd>⌘</kbd><kbd>K</kbd>
+    </button>
+  </div>
 </header>
+
+<style>
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+</style>
 
 <script>
   // Scroll spy — marks active nav link based on visible section

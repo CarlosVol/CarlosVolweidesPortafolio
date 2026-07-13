@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import CmdK from './CmdK.tsx';
+import type { Lang } from '../i18n/ui';
+import { useTranslations, localizePath, getProjects, getCmdkItems, fmt } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const projects = await getProjects(lang);
+const total = String(projects.length).padStart(2, '0');
+---
+
+<BaseLayout lang={lang} title={t.seo.projectsTitle} description={t.seo.projectsDescription}>
+  <div class="bg-grid"></div>
+  <div class="bg-noise"></div>
+
+  <Header lang={lang} />
+
+  <main>
+    <section style="padding-top: 140px;">
+      <div class="section-label"><span class="idx">04</span> / {t.projects.allLabel}</div>
+      <div class="projects-grid">
+        {projects.map(p => (
+          <article class="project reveal">
+            <div class="project-content">
+              <div class="project-header">
+                <span class="index">{p.data.idx} / {total}</span>
+                <span class={`status-tag ${p.data.status === 'live' ? 'live' : ''}`}>
+                  {p.data.statusLabel}
+                </span>
+              </div>
+              <h3>{p.data.title}</h3>
+              <div class="project-role">{p.data.role}</div>
+              <p class="project-desc">{p.data.description}</p>
+              <div class="project-tech">
+                {p.data.stack.map(s => <span>{s}</span>)}
+              </div>
+              <a
+                href={localizePath(lang, `/projects/${p.slug}`)}
+                class="project-cta"
+                aria-label={fmt(t.projects.caseStudyAria, { title: p.data.title })}
+              >
+                {t.projects.caseStudy}
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  </main>
+
+  <Footer lang={lang} />
+  <CmdK client:load items={getCmdkItems(lang)} labels={t.cmdk} />
+</BaseLayout>
+
+<script>
+  const els = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
+  const check = () => {
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    els.forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (r.top < vh * 0.9 && r.bottom > 0) el.classList.add('in');
+    });
+  };
+  check();
+  window.addEventListener('scroll', check, { passive: true });
+  setTimeout(() => els.forEach(el => el.classList.add('in')), 1500);
+</script>

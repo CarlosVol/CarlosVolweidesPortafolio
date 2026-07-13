@@ -1,0 +1,395 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import CmdK from './CmdK.tsx';
+import ContactForm from './ContactForm.astro';
+import { LOCALE_TAG, type Lang } from '../i18n/ui';
+import { useTranslations, localizePath, getProjects, getCmdkItems, fmt } from '../i18n/utils';
+import {
+  Code2, Braces, Cpu, FileCode,
+  Atom, Layers, Smartphone, Zap,
+  Server, FlaskConical, Globe, Box,
+  Database, Cylinder,
+  Boxes, Workflow,
+  Brain, Bot, Terminal,
+  TestTube2, GitBranch, MessageSquareCode, RefreshCw,
+  Users, LayoutDashboard, PenTool,
+} from 'lucide-react';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const STACK_ICONS: Record<string, any> = {
+  // Languages
+  'TypeScript': Code2, 'JavaScript': Braces, 'Python': Cpu, 'PHP': FileCode,
+  // Frontend
+  'React': Atom, 'Next.js': Layers, 'React Native': Smartphone, 'Vite': Zap,
+  // Backend
+  'FastAPI': Zap, 'Node.js': Server, 'Flask': FlaskConical, 'Django': Globe,
+  // Data
+  'PostgreSQL': Database, 'MongoDB': Cylinder, 'Supabase': Database, 'MySQL': Database,
+  // Architecture
+  'Clean Architecture': Layers, 'DDD': Box, 'Event-driven': Workflow, 'OOP': Boxes,
+  // AI / LLM
+  'RAG systems': Brain, 'Vercel AI': Bot, 'Claude Code': Terminal, 'Copilot': Bot,
+  // Practices
+  'Unit testing': TestTube2, 'Git Flow': GitBranch, 'Code review': MessageSquareCode, 'Refactoring': RefreshCw,
+  // Tooling
+  'Git': GitBranch, 'Jira': LayoutDashboard, 'Scrum': Users, 'Figma': PenTool,
+};
+
+const projects = await getProjects(lang);
+const total = String(projects.length).padStart(2, '0');
+
+// `items` double as STACK_ICONS keys, so they are never translated.
+const STACK = [
+  { title: t.stack.languages,    items: ['TypeScript', 'JavaScript', 'Python', 'PHP'] },
+  { title: t.stack.frontend,     items: ['React', 'Next.js', 'React Native', 'Vite'] },
+  { title: t.stack.backend,      items: ['FastAPI', 'Node.js', 'Flask', 'Django'] },
+  { title: t.stack.data,         items: ['PostgreSQL', 'MongoDB', 'Supabase', 'MySQL'] },
+  { title: t.stack.architecture, items: ['Clean Architecture', 'DDD', 'Event-driven', 'OOP'] },
+  { title: t.stack.ai,           items: ['RAG systems', 'Vercel AI', 'Claude Code', 'Copilot'] },
+  { title: t.stack.practices,    items: ['Unit testing', 'Git Flow', 'Code review', 'Refactoring'] },
+  { title: t.stack.tooling,      items: ['Git', 'Jira', 'Scrum', 'Figma'] },
+];
+
+const EXPERIENCE = [
+  {
+    company: 'Digitan Agency',
+    role: t.experience.role,
+    date: t.experience.date,
+    current: true,
+    summary: t.experience.summary,
+    bullets: t.experience.bullets,
+    tags: ['Next.js', 'FastAPI', 'React Native', 'PostgreSQL', 'AWS'],
+  },
+];
+
+// Box-drawing art: the column widths are hand-tuned, so it stays locale-neutral.
+const PROJECT_VISUALS: Record<string, string> = {
+  'atlas-protocol': `┌─────────────────────────────┐
+│  atlas/protocol             │
+│  ─────────────              │
+│  > generate_course("rust")  │
+│  · indexing knowledge ████  │
+│  · embedding 1.4M tokens    │
+│  · path generated [12 mod]  │
+│                             │
+│  rag.query("ownership")     │
+│  └─ context: 8 chunks       │
+│  └─ confidence: 0.94        │
+│                             │
+│  ◉ session: active          │
+└─────────────────────────────┘`,
+  'repositorio-ugma': `┌──────────────────┐
+│ ugma/repo        │
+│ ──               │
+│ tesis: 247       │
+│ aprobadas: 198   │
+│ pendientes: 49   │
+│ usuarios: 1,2k   │
+│                  │
+│ [admin · alumno] │
+└──────────────────┘`,
+  'luxdata': `┌──────────────┐
+│ luxdata      │
+│ ──           │
+│ rooms 64/82  │
+│ checkin  12  │
+│ revenue ↑18% │
+└──────────────┘`,
+};
+
+const SECTION_SIZES: Record<string, string> = {
+  'atlas-protocol': 'full',
+  'repositorio-ugma': 'large',
+  'luxdata': 'small',
+};
+---
+
+<BaseLayout lang={lang}>
+  <div class="bg-grid"></div>
+  <div class="bg-noise"></div>
+
+  <Header lang={lang} />
+
+  <main>
+    <!-- Hero -->
+    <section id="home" class="hero">
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <span class="k">{t.hero.location}</span>
+          <span class="v">{t.hero.locationValue}</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="k">{t.hero.role}</span>
+          <span class="v">{t.hero.roleValue}</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="k">{t.hero.status}</span>
+          <span class="v" style="color: var(--accent)">{t.hero.statusValue}</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="k">{t.hero.localTime}</span>
+          <span class="v" id="local-time">—</span>
+        </div>
+      </div>
+
+      <h1 class="reveal hero-name" data-text="Carlos Volweides_tsx">
+        Carlos<br />
+        Volweides<span class="accent">_tsx</span>
+      </h1>
+
+      <div class="hero-tagline reveal">
+        <span class="role">{t.hero.taglineRole}</span>
+        <span class="arrow">→</span>
+        <span>
+          {t.hero.taglineLead}
+          <strong style="color: var(--fg)"> {t.hero.taglineArch}</strong>,
+          <strong style="color: var(--fg)"> {t.hero.taglineDdd}</strong> {t.hero.taglineJoin}
+          <strong style="color: var(--fg)"> {t.hero.taglineLlm}</strong>.
+        </span>
+      </div>
+
+      <div class="hero-cta reveal">
+        <a href={localizePath(lang, '/projects')} class="btn primary">
+          {t.hero.ctaProjects} <span class="arrow">→</span>
+        </a>
+        <a href="#contact" class="btn">
+          {t.hero.ctaContact} <span class="arrow">↗</span>
+        </a>
+      </div>
+
+      <div class="hero-side">
+        ─── system.online<br />
+        ─── runtime: node·py<br />
+        ─── lat: 10.48° N<br />
+        ─── lon: -66.87° W<br />
+        <br />
+        ◉ deploying<br />
+        ◉ refactoring<br />
+        ◉ shipping
+      </div>
+
+      <div class="scroll-indicator">
+        <span>{t.hero.scroll}</span>
+        <div class="line"></div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about">
+      <div class="section-label"><span class="idx">01</span> / {t.about.label}</div>
+      <div class="about-wrap">
+        <div class="about-left reveal">
+          <h2>{t.about.headingLine1}<br /><span class="em">{t.about.headingLine2}</span></h2>
+          <div class="meta">
+            <div class="meta-row"><span class="k">{t.about.based}</span><span class="v">{t.about.basedValue}</span></div>
+            <div class="meta-row"><span class="k">{t.about.edu}</span><span class="v">{t.about.eduValue}</span></div>
+            <div class="meta-row"><span class="k">{t.about.years}</span><span class="v">{t.about.yearsValue}</span></div>
+            <div class="meta-row"><span class="k">{t.about.mode}</span><span class="v">{t.about.modeValue}</span></div>
+          </div>
+        </div>
+        <div class="about-right reveal">
+          <p>
+            {t.about.p1Prefix} <strong>{t.about.p1Lead}</strong> {t.about.p1}
+            <span class="hl">JavaScript/TypeScript</span>, <span class="hl">React</span>,
+            <span class="hl">Next.js</span>, <span class="hl">React Native</span> {t.about.p1Tail} <span class="hl">Python</span>
+            {t.about.p1Python}
+          </p>
+          <p>
+            {t.about.p2Prefix} <strong>{t.about.p2Lead}</strong> {t.about.p2}
+          </p>
+          <p>
+            {t.about.p3Prefix} <strong>{t.about.p3Lead}</strong> {t.about.p3}
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stack -->
+    <section id="stack">
+      <div class="section-label"><span class="idx">02</span> / {t.stack.label}</div>
+      <div class="stack-grid reveal">
+        {STACK.map((cell, i) => (
+          <div class="stack-cell">
+            <div class="stack-cell-head">
+              <div class="stack-cell-title">{cell.title}</div>
+              <div class="stack-cell-num">{String(i + 1).padStart(2, '0')}</div>
+            </div>
+            <ul class="stack-cell-list">
+              {cell.items.map(it => {
+                const Icon = STACK_ICONS[it];
+                return (
+                  <li>
+                    {Icon && <Icon size={13} strokeWidth={1.5} />}
+                    {it}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Experience -->
+    <section id="work">
+      <div class="section-label"><span class="idx">03</span> / {t.experience.label}</div>
+      {EXPERIENCE.map(e => (
+        <div class="exp-row reveal">
+          <div class="exp-date">
+            {e.current && <span class="now"></span>}{e.date}
+          </div>
+          <div class="exp-main">
+            <h3>{e.company}</h3>
+            <div class="role">{e.role}</div>
+            <p>{e.summary}</p>
+            <ul>
+              {e.bullets.map(b => <li>{b}</li>)}
+            </ul>
+          </div>
+          <div class="exp-tags">
+            {e.tags.map(tag => <span class="exp-tag">{tag}</span>)}
+          </div>
+        </div>
+      ))}
+    </section>
+
+    <!-- Projects -->
+    <section id="projects">
+      <div class="section-label"><span class="idx">04</span> / {t.projects.label}</div>
+      <div class="projects-grid">
+        {projects.map(p => (
+          <article class={`project ${SECTION_SIZES[p.slug] ?? ''} reveal`}>
+            <div class="project-content">
+              <div class="project-header">
+                <span class="index">{p.data.idx} / {total}</span>
+                <span class="status">
+                  <span class={`status-tag ${p.data.status === 'live' ? 'live' : ''}`}>
+                    {p.data.statusLabel}
+                  </span>
+                </span>
+              </div>
+              <h3>{p.data.title}</h3>
+              <div class="project-role">{p.data.role}</div>
+              <p class="project-desc">{p.data.description}</p>
+              <div class="project-tech">
+                {p.data.stack.map(s => <span>{s}</span>)}
+              </div>
+              <a
+                href={localizePath(lang, `/projects/${p.slug}`)}
+                class="project-cta"
+                aria-label={fmt(t.projects.caseStudyAria, { title: p.data.title })}
+              >
+                {t.projects.caseStudy}
+              </a>
+            </div>
+            {PROJECT_VISUALS[p.slug] && (
+              <pre class="project-visual">{PROJECT_VISUALS[p.slug]}</pre>
+            )}
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="contact">
+      <div class="contact-prompt">
+        <span class="accent">$</span> <span class="prompt-text"></span><span class="cursor"></span>
+      </div>
+      <h2>
+        {t.contact.headingLine1}<br />
+        <a href="mailto:carlos.volweides@gmail.com">{t.contact.headingLine2}</a>.
+      </h2>
+      <div class="contact-grid">
+        <a class="contact-cell" href="https://github.com/CarlosVol" target="_blank" rel="noopener">
+          <span class="contact-cell-k">GitHub</span>
+          <span class="contact-cell-v">@CarlosVol</span>
+        </a>
+        <a class="contact-cell" href="https://linkedin.com/in/carlos-volweides" target="_blank" rel="noopener">
+          <span class="contact-cell-k">LinkedIn</span>
+          <span class="contact-cell-v">/in/carlos-volweides</span>
+        </a>
+        <div class="contact-cell">
+          <span class="contact-cell-k">{t.contact.location}</span>
+          <span class="contact-cell-v">{t.contact.locationValue}</span>
+        </div>
+        <div class="contact-cell">
+          <span class="contact-cell-k">{t.contact.status}</span>
+          <span class="contact-cell-v" style="color: var(--accent)">{t.contact.statusValue}</span>
+        </div>
+      </div>
+      <ContactForm lang={lang} />
+    </section>
+  </main>
+
+  <Footer lang={lang} />
+
+  <CmdK client:load items={getCmdkItems(lang)} labels={t.cmdk} />
+</BaseLayout>
+
+<script define:vars={{ localeTag: LOCALE_TAG[lang], promptText: t.hero.prompt }}>
+  // Local time — Caracas (VET, UTC-4)
+  const el = document.getElementById('local-time');
+  if (el) {
+    const upd = () => {
+      el.textContent = new Date().toLocaleTimeString(localeTag, {
+        hour: '2-digit', minute: '2-digit',
+        timeZone: 'America/Caracas', hour12: false,
+      }) + ' VET';
+    };
+    upd();
+    setInterval(upd, 1000);
+  }
+
+  // Reveal on scroll with sibling stagger
+  const els = Array.from(document.querySelectorAll('.reveal'));
+  const reveal = (target) => {
+    if (target.classList.contains('in')) return;
+    const siblings = Array.from(target.parentElement?.children ?? []).filter(
+      c => c.classList.contains('reveal')
+    );
+    const idx = siblings.indexOf(target);
+    if (idx > 0) target.style.transitionDelay = `${idx * 60}ms`;
+    target.classList.add('in');
+  };
+  const check = () => {
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    els.forEach(node => {
+      const r = node.getBoundingClientRect();
+      if (r.top < vh * 0.9 && r.bottom > 0) reveal(node);
+    });
+  };
+  check();
+  window.addEventListener('scroll', check, { passive: true });
+  window.addEventListener('resize', check);
+  setTimeout(() => els.forEach(node => { node.style.transitionDelay = '0ms'; reveal(node); }), 1500);
+
+  // Typewriter for contact prompt — fires once when section enters viewport
+  const promptEl = document.querySelector('.prompt-text');
+  if (promptEl) {
+    const typewrite = (target, text, speed = 42) => {
+      let i = 0;
+      target.textContent = '';
+      const tick = () => {
+        target.textContent += text[i++];
+        if (i < text.length) setTimeout(tick, speed);
+      };
+      tick();
+    };
+    const observer = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) {
+        typewrite(promptEl, promptText);
+        observer.disconnect();
+      }
+    }, { threshold: 0.5 });
+    const contactSection = document.getElementById('contact');
+    if (contactSection) observer.observe(contactSection);
+  }
+</script>
