@@ -85,7 +85,17 @@ All colors and spacing live in CSS custom properties in `src/styles/global.css`:
 - `--bg`, `--bg-elev`, `--bg-card` — background hierarchy
 - `--line`, `--line-strong` — borders
 - `--mono`, `--sans` — Geist Mono / Geist (Google Fonts)
-- `--pad` — horizontal section padding (96px desktop, 24px mobile)
+- `--pad` — horizontal section padding (`6rem` desktop, `1.5rem` mobile)
+
+### Global scale
+
+**Every size is authored in `rem`, so `html { font-size }` is the single knob that scales the whole site.** 16px = 1×, 24px = 1.5×. It ramps fluidly from 16px at a 900px viewport to 24px at 1350px and above.
+
+It deliberately stays at 16px below 900px: `@media` breakpoints are in *viewport* px and do **not** respond to the root font-size, so scaling up there would blow out the mobile layout without the breakpoints moving with it.
+
+Things that stay in `px` on purpose: border widths, the `gap: 1px` hairlines in `.stack-grid`/`.projects-grid`/`.contact-grid`, `@media` breakpoints, the `.bg-grid` pattern, and `blur()` radii.
+
+The `vw` terms inside `clamp()` (e.g. `.hero h1`) must **not** be converted — `vw` is already viewport-relative and scaling it would double-count.
 
 ## Interactivity
 
