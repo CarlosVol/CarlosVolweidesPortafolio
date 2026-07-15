@@ -21,6 +21,7 @@ const i18n = {
   errors: f.errors,
   submit: f.submit,
   submitting: f.submitting,
+  privacy: f.privacy,
 };
 ---
 
@@ -66,6 +67,33 @@ const i18n = {
     </div>
 
     <button type="submit" id="submit-btn" class="btn primary form-submit">{f.submit}</button>
+
+    <div class="privacy">
+      <p class="privacy-line">
+        {f.privacy.intro}{' '}
+        <button
+          type="button"
+          id="privacy-toggle"
+          class="privacy-toggle"
+          aria-expanded="false"
+          aria-controls="privacy-panel"
+        >
+          <span id="privacy-toggle-label">{f.privacy.showLabel}</span>
+          <span id="privacy-toggle-arrow" aria-hidden="true">↓</span>
+        </button>
+      </p>
+      <div
+        id="privacy-panel"
+        class="privacy-panel"
+        role="region"
+        aria-label={f.privacy.title}
+      >
+        <p class="privacy-title">{f.privacy.title}</p>
+        <p>{f.privacy.body1}</p>
+        <p>{f.privacy.body2}</p>
+        <p>{f.privacy.contact} <a id="privacy-email" href="#"></a></p>
+      </div>
+    </div>
 
     <div id="form-status" class="form-status" role="alert" hidden></div>
   </form>
@@ -215,6 +243,64 @@ const i18n = {
     border: 1px solid #e5484d;
     color: #e5484d;
   }
+
+  .privacy {
+    margin-top: -0.5rem;
+  }
+
+  .privacy-line {
+    margin: 0;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--fg-dim);
+  }
+
+  .privacy-toggle {
+    background: transparent;
+    border: none;
+    padding: 0;
+    font: inherit;
+    font-size: 0.75rem;
+    color: var(--fg-dim);
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+  .privacy-toggle:hover {
+    color: var(--fg-mute);
+  }
+  .privacy-toggle #privacy-toggle-arrow {
+    margin-left: 0.15em;
+  }
+
+  .privacy-panel {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: var(--fg-mute);
+  }
+  .privacy-panel.open {
+    max-height: 30rem;
+    opacity: 1;
+    margin-top: 0.75rem;
+  }
+  .privacy-panel p {
+    margin: 0 0 0.5rem;
+  }
+  .privacy-panel p:last-child {
+    margin-bottom: 0;
+  }
+  .privacy-title {
+    font-weight: 600;
+    color: var(--fg);
+  }
+  .privacy-panel a {
+    color: var(--accent);
+    text-decoration: underline;
+  }
 </style>
 
 <script define:vars={{ i18n, lang, MAX_MESSAGE_LENGTH }}>
@@ -311,6 +397,26 @@ const i18n = {
   mensajeTextarea.addEventListener('input', () => {
     charCounter.textContent = `${mensajeTextarea.value.length} / ${MAX_MESSAGE_LENGTH}`;
   });
+
+  // Privacy policy — expand/collapse toggle
+  const privacyToggle = document.getElementById('privacy-toggle');
+  const privacyPanel = document.getElementById('privacy-panel');
+  const privacyLabel = document.getElementById('privacy-toggle-label');
+  const privacyArrow = document.getElementById('privacy-toggle-arrow');
+
+  privacyToggle.addEventListener('click', () => {
+    const open = privacyToggle.getAttribute('aria-expanded') === 'true';
+    privacyToggle.setAttribute('aria-expanded', String(!open));
+    privacyPanel.classList.toggle('open', !open);
+    privacyLabel.textContent = open ? i18n.privacy.showLabel : i18n.privacy.hideLabel;
+    privacyArrow.textContent = open ? '↓' : '↑';
+  });
+
+  // Email kept out of static HTML — decoded only at runtime.
+  const privacyEmail = document.getElementById('privacy-email');
+  const privacyAddr = atob('Y2FybG9zLnZvbHdlaWRlc0BnbWFpbC5jb20=');
+  privacyEmail.textContent = privacyAddr;
+  privacyEmail.href = `mailto:${privacyAddr}`;
 
   function showStatus(kind, title, subtitle) {
     formStatus.hidden = false;

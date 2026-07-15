@@ -172,6 +172,17 @@ const es = {
     tipoNetworking: 'Networking / Otro',
     submit: 'Enviar mensaje',
     submitting: 'Enviando...',
+    privacy: {
+      intro: 'Tu email solo se usa para responderte.',
+      showLabel: 'Ver política de privacidad',
+      hideLabel: 'Ocultar',
+      title: 'Política de privacidad',
+      body1:
+        'Al enviar este formulario, compartes tu nombre y email conmigo (Carlos Volweides) con el único propósito de responder tu mensaje.',
+      body2:
+        'No vendo, comparto ni uso tus datos para ningún otro fin. Los mensajes son procesados por Resend (resend.com) para el envío del email y se eliminan automáticamente en 30 días.',
+      contact: 'Para cualquier duda:',
+    },
     tipos: {
       trabajo: {
         companyLabel: 'Empresa que contrata',
@@ -372,6 +383,17 @@ const en: Dict = {
     tipoNetworking: 'Networking / Other',
     submit: 'Send message',
     submitting: 'Sending...',
+    privacy: {
+      intro: 'Your email is only used to reply to you.',
+      showLabel: 'View privacy policy',
+      hideLabel: 'Hide',
+      title: 'Privacy policy',
+      body1:
+        'By submitting this form, you share your name and email with me (Carlos Volweides) for the sole purpose of replying to your message.',
+      body2:
+        'I do not sell, share or use your data for any other purpose. Messages are processed by Resend (resend.com) to deliver the email and are deleted automatically after 30 days.',
+      contact: 'Any questions:',
+    },
     tipos: {
       trabajo: {
         companyLabel: 'Hiring company',
