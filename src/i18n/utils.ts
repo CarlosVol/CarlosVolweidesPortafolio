@@ -56,7 +56,7 @@ export function getCmdkItems(lang: Lang): CmdkItem[] {
       href: `${home}#${s.id}`,
     })),
     { label: t.cmdk.email, hint: 'mail', href: 'mailto:carlos.volweides@gmail.com' },
-    { label: t.cmdk.github, hint: 'gh', href: 'https://github.com/CarlosVol' },
+    { label: t.cmdk.github, hint: 'gh', href: 'https://github.com/CarlosVolweides' },
     { label: t.cmdk.linkedin, hint: 'in', href: 'https://linkedin.com/in/carlos-volweides' },
     { label: t.cmdk.allProjects, hint: '04', href: localizePath(lang, '/projects') },
   ];
