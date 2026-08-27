@@ -4,8 +4,9 @@ import Header from './Header.astro';
 import Footer from './Footer.astro';
 import CmdK from './CmdK.tsx';
 import ContactForm from './ContactForm.astro';
+import ProjectCard from './ProjectCard.astro';
 import { LOCALE_TAG, type Lang } from '../i18n/ui';
-import { useTranslations, localizePath, getProjects, getCmdkItems, fmt } from '../i18n/utils';
+import { useTranslations, localizePath, getProjects, getCmdkItems } from '../i18n/utils';
 import {
   Code2, Braces, Cpu, FileCode,
   Atom, Layers, Smartphone, Zap,
@@ -70,46 +71,6 @@ const EXPERIENCE = [
   },
 ];
 
-// Box-drawing art: the column widths are hand-tuned, so it stays locale-neutral.
-const PROJECT_VISUALS: Record<string, string> = {
-  'atlas-protocol': `┌─────────────────────────────┐
-│  atlas/protocol             │
-│  ─────────────              │
-│  > generate_course("rust")  │
-│  · indexing knowledge ████  │
-│  · embedding 1.4M tokens    │
-│  · path generated [12 mod]  │
-│                             │
-│  rag.query("ownership")     │
-│  └─ context: 8 chunks       │
-│  └─ confidence: 0.94        │
-│                             │
-│  ◉ session: active          │
-└─────────────────────────────┘`,
-  'repositorio-ugma': `┌──────────────────┐
-│ ugma/repo        │
-│ ──               │
-│ tesis: 247       │
-│ aprobadas: 198   │
-│ pendientes: 49   │
-│ usuarios: 1,2k   │
-│                  │
-│ [admin · alumno] │
-└──────────────────┘`,
-  'luxdata': `┌──────────────┐
-│ luxdata      │
-│ ──           │
-│ rooms 64/82  │
-│ checkin  12  │
-│ revenue ↑18% │
-└──────────────┘`,
-};
-
-const SECTION_SIZES: Record<string, string> = {
-  'atlas-protocol': 'full',
-  'repositorio-ugma': 'large',
-  'luxdata': 'small',
-};
 ---
 
 <BaseLayout lang={lang}>
@@ -264,37 +225,8 @@ const SECTION_SIZES: Record<string, string> = {
     <!-- Projects -->
     <section id="projects">
       <div class="section-label"><span class="idx">04</span> / {t.projects.label}</div>
-      <div class="projects-grid">
-        {projects.map(p => (
-          <article class={`project ${SECTION_SIZES[p.slug] ?? ''} reveal`}>
-            <div class="project-content">
-              <div class="project-header">
-                <span class="index">{p.data.idx} / {total}</span>
-                <span class="status">
-                  <span class={`status-tag ${p.data.status === 'live' ? 'live' : ''}`}>
-                    {p.data.statusLabel}
-                  </span>
-                </span>
-              </div>
-              <h3>{p.data.title}</h3>
-              <div class="project-role">{p.data.role}</div>
-              <p class="project-desc">{p.data.description}</p>
-              <div class="project-tech">
-                {p.data.stack.map(s => <span>{s}</span>)}
-              </div>
-              <a
-                href={localizePath(lang, `/projects/${p.slug}`)}
-                class="project-cta"
-                aria-label={fmt(t.projects.caseStudyAria, { title: p.data.title })}
-              >
-                {t.projects.caseStudy}
-              </a>
-            </div>
-            {PROJECT_VISUALS[p.slug] && (
-              <pre class="project-visual">{PROJECT_VISUALS[p.slug]}</pre>
-            )}
-          </article>
-        ))}
+      <div class="projects-stack">
+        {projects.map(p => <ProjectCard project={p} total={total} lang={lang} />)}
       </div>
     </section>
 

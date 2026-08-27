@@ -1,0 +1,78 @@
+---
+/**
+ * A project's media: one image/video, or a scroll-snap carousel when there are
+ * several. Files live in `public/projects/<slug>/`, so `src` is a plain path.
+ *
+ * The carousel degrades to a horizontally scrollable strip without JS — the
+ * script only mirrors scroll position onto the dots.
+ */
+import type { CollectionEntry } from 'astro:content';
+
+type Media = NonNullable<CollectionEntry<'projects'>['data']['media']>;
+
+interface Props {
+  media: Media;
+  /** Labels for the dot buttons, already localized. */
+  slideLabel: string;
+}
+
+const { media, slideLabel } = Astro.props;
+const many = media.length > 1;
+---
+
+<div class={`media-slot${many ? ' is-carousel' : ''}`}>
+  <div class="media-track" role={many ? 'group' : undefined} aria-label={many ? slideLabel : undefined}>
+    {media.map((item, i) => (
+      <div class="media-item">
+        {item.type === 'video' ? (
+          <video
+            src={item.src}
+            poster={item.poster}
+            controls
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            aria-label={item.alt}
+          />
+        ) : (
+          <img src={item.src} alt={item.alt} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" />
+        )}
+      </div>
+    ))}
+  </div>
+
+  {many && (
+    <div class="media-dots">
+      {media.map((_, i) => (
+        <button type="button" class="media-dot" data-index={i} aria-current={i === 0 ? 'true' : 'false'}>
+          <span class="sr-only">{`${slideLabel} ${i + 1}`}</span>
+        </button>
+      ))}
+    </div>
+  )}
+</div>
+
+<script>
+  // One handler for every carousel on the page. Dots reflect scroll position;
+  // clicking one scrolls the track. Nothing here is required for the media to
+  // be reachable — the track scrolls on its own.
+  document.querySelectorAll<HTMLElement>('.media-slot.is-carousel').forEach(slot => {
+    const track = slot.querySelector<HTMLElement>('.media-track');
+    const dots = Array.from(slot.querySelectorAll<HTMLButtonElement>('.media-dot'));
+    if (!track || !dots.length) return;
+
+    const sync = () => {
+      const index = Math.round(track.scrollLeft / track.clientWidth);
+      dots.forEach((dot, i) => dot.setAttribute('aria-current', String(i === index)));
+    };
+
+    track.addEventListener('scroll', () => requestAnimationFrame(sync), { passive: true });
+
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => {
+        track.scrollTo({ left: track.clientWidth * i, behavior: 'smooth' });
+      });
+    });
+  });
+</script>

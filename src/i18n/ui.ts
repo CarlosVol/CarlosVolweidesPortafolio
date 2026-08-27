@@ -31,7 +31,7 @@ const es = {
       'Ingeniero fullstack especializado en TypeScript, React, Next.js, Python (FastAPI), arquitectura limpia, DDD e integración de LLM/RAG. Basado en Caracas, Venezuela.',
     projectsTitle: 'Proyectos — Carlos Volweides',
     projectsDescription:
-      'Proyectos seleccionados de Carlos Volweides: Atlas Protocol, Repositorio UGMA, Luxdata.',
+      'Proyectos seleccionados de Carlos Volweides: Frida, Atlas Protocol, Repositorio UGMA, Luxdata.',
     jobTitle: 'Ingeniero Fullstack',
   },
 
@@ -130,7 +130,6 @@ const es = {
     role: 'Rol',
     demo: 'Ver demo',
     repo: 'Ver repo',
-    requestCase: 'Solicitar caso de estudio completo',
   },
 
   contact: {
@@ -242,7 +241,7 @@ const en: Dict = {
       'Fullstack Engineer specializing in TypeScript, React, Next.js, Python (FastAPI), clean architecture, DDD, and LLM/RAG integration. Based in Caracas, Venezuela.',
     projectsTitle: 'Projects — Carlos Volweides',
     projectsDescription:
-      'Selected projects by Carlos Volweides: Atlas Protocol, Repositorio UGMA, Luxdata.',
+      'Selected projects by Carlos Volweides: Frida, Atlas Protocol, Repositorio UGMA, Luxdata.',
     jobTitle: 'Fullstack Engineer',
   },
 
@@ -341,7 +340,6 @@ const en: Dict = {
     role: 'Role',
     demo: 'Live demo',
     repo: 'View repo',
-    requestCase: 'Request full case study',
   },
 
   contact: {

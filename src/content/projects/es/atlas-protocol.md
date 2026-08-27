@@ -7,7 +7,7 @@ status: live
 statusLabel: MVP · Closed beta
 featured: true
 date: 2024-09-01
-idx: '01'
+idx: '02'
 ---
 
 ## Overview

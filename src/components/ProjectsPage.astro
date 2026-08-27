@@ -3,8 +3,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from './Header.astro';
 import Footer from './Footer.astro';
 import CmdK from './CmdK.tsx';
+import ProjectCard from './ProjectCard.astro';
 import type { Lang } from '../i18n/ui';
-import { useTranslations, localizePath, getProjects, getCmdkItems, fmt } from '../i18n/utils';
+import { useTranslations, getProjects, getCmdkItems } from '../i18n/utils';
 
 interface Props {
   lang: Lang;
@@ -26,32 +27,8 @@ const total = String(projects.length).padStart(2, '0');
   <main>
     <section style="padding-top: 8.75rem;">
       <div class="section-label"><span class="idx">04</span> / {t.projects.allLabel}</div>
-      <div class="projects-grid">
-        {projects.map(p => (
-          <article class="project reveal">
-            <div class="project-content">
-              <div class="project-header">
-                <span class="index">{p.data.idx} / {total}</span>
-                <span class={`status-tag ${p.data.status === 'live' ? 'live' : ''}`}>
-                  {p.data.statusLabel}
-                </span>
-              </div>
-              <h3>{p.data.title}</h3>
-              <div class="project-role">{p.data.role}</div>
-              <p class="project-desc">{p.data.description}</p>
-              <div class="project-tech">
-                {p.data.stack.map(s => <span>{s}</span>)}
-              </div>
-              <a
-                href={localizePath(lang, `/projects/${p.slug}`)}
-                class="project-cta"
-                aria-label={fmt(t.projects.caseStudyAria, { title: p.data.title })}
-              >
-                {t.projects.caseStudy}
-              </a>
-            </div>
-          </article>
-        ))}
+      <div class="projects-stack">
+        {projects.map(p => <ProjectCard project={p} total={total} lang={lang} />)}
       </div>
     </section>
   </main>

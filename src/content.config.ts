@@ -15,6 +15,23 @@ const projects = defineCollection({
     demoUrl: z.string().url().optional(),
     repoUrl: z.string().url().optional(),
     idx: z.string(),
+    /**
+     * Optional images/video for the card's visual slot. Paths are served from
+     * `public/media/<slug>/`, kept out of the `/projects/*` route namespace so
+     * page and asset paths never collide. Falls back to the project's ASCII art
+     * when absent. `alt` is per-locale, which is why this lives in frontmatter
+     * rather than in a slug-keyed map.
+     */
+    media: z
+      .array(
+        z.object({
+          type: z.enum(['image', 'video']).default('image'),
+          src: z.string(),
+          alt: z.string(),
+          poster: z.string().optional(),
+        })
+      )
+      .optional(),
   }),
 });
 

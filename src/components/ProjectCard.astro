@@ -1,0 +1,55 @@
+---
+/**
+ * One project in the stack, shared by the homepage and the /projects index.
+ *
+ * Must stay a direct child of `.projects-stack`: the reveal stagger in
+ * HomePage.astro derives its delay from the element's index among its siblings.
+ */
+import MediaSlot from './MediaSlot.astro';
+import type { Lang } from '../i18n/ui';
+import { useTranslations, localizePath, fmt, type LocalizedProject } from '../i18n/utils';
+import { PROJECT_VISUALS, asciiCols } from '../i18n/visuals';
+
+interface Props {
+  project: LocalizedProject;
+  /** Zero-padded project count, for the `01 / 04` counter. */
+  total: string;
+  lang: Lang;
+}
+
+const { project, total, lang } = Astro.props;
+const t = useTranslations(lang);
+const { data, slug } = project;
+
+const art = PROJECT_VISUALS[slug];
+---
+
+<article class="project-row reveal">
+  <div class="project-media">
+    {data.media?.length ? (
+      <MediaSlot media={data.media} slideLabel={data.title} />
+    ) : art ? (
+      <pre class="project-visual" style={`--ascii-cols:${asciiCols(art)}`}>{art}</pre>
+    ) : null}
+  </div>
+
+  <div class="project-content">
+    <div class="project-header">
+      <span class="index">{data.idx} / {total}</span>
+      <span class={`status-tag ${data.status === 'live' ? 'live' : ''}`}>{data.statusLabel}</span>
+    </div>
+    <h3>{data.title}</h3>
+    <div class="project-role">{data.role}</div>
+    <p class="project-desc">{data.description}</p>
+    <div class="project-tech">
+      {data.stack.map(s => <span>{s}</span>)}
+    </div>
+    <a
+      href={localizePath(lang, `/projects/${slug}`)}
+      class="project-cta"
+      aria-label={fmt(t.projects.caseStudyAria, { title: data.title })}
+    >
+      {t.projects.caseStudy}
+    </a>
+  </div>
+</article>
