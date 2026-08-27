@@ -44,8 +44,19 @@ const es = {
     contact: 'contacto',
   },
 
+  /** Etiquetas cortas para la barra inferior de mobile — seis tabs a 320px. */
+  navShort: {
+    home: 'inicio',
+    about: 'sobre mí',
+    stack: 'stack',
+    experience: 'exp',
+    projects: 'proyectos',
+    contact: 'contacto',
+  },
+
   header: {
     cmdk: 'Abrir paleta de comandos',
+    mobileNav: 'Navegación por secciones',
     switchTo: 'Ver en inglés',
   },
 
@@ -254,8 +265,18 @@ const en: Dict = {
     contact: 'contact',
   },
 
+  navShort: {
+    home: 'index',
+    about: 'about',
+    stack: 'stack',
+    experience: 'exp',
+    projects: 'projects',
+    contact: 'contact',
+  },
+
   header: {
     cmdk: 'Open command palette',
+    mobileNav: 'Section navigation',
     switchTo: 'View in Spanish',
   },
 

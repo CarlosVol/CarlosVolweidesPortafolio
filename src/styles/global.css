@@ -136,6 +136,31 @@ main { position: relative; z-index: 1; }
 .topbar-nav a.active { color: var(--fg); }
 .topbar-nav .num { color: var(--accent); font-size: 0.5625rem; }
 
+/* ============================================================
+   Bottom bar (mobile)
+   ============================================================ */
+
+/* Oculta por defecto — se enciende en el @media (max-width: 900px) de abajo,
+   el mismo punto donde .topbar-nav desaparece. */
+.mobilenav { display: none; }
+
+.mobilenav-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0.25rem;
+  font-family: var(--mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.02em;
+  color: var(--fg-dim);
+  transition: color 0.15s;
+}
+.mobilenav-tab .label { white-space: nowrap; }
+.mobilenav-tab.active { color: var(--accent); }
+
 .cmdk-hint {
   display: flex; gap: 0.1875rem; align-items: center;
   font-family: var(--mono); font-size: 0.6875rem; color: var(--fg-dim);
@@ -746,6 +771,20 @@ footer .left { display: flex; gap: 1rem; }
 @media (max-width: 900px) {
   :root { --pad: 1.5rem; }
   .topbar-nav { display: none; }
+
+  .mobilenav {
+    display: flex;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 50;
+    border-top: 1px solid var(--line);
+    background: linear-gradient(to top, rgba(10,10,11,0.95), rgba(10,10,11,0.75));
+    backdrop-filter: blur(8px);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  /* Deja aire bajo el footer para que la barra no tape el copyright. */
+  footer { padding-bottom: calc(1.5rem + 3.75rem + env(safe-area-inset-bottom)); }
+
   .about-wrap { grid-template-columns: 1fr; gap: 2.5rem; }
   .exp-row { grid-template-columns: 1fr; gap: 1rem; }
   .exp-tags { align-items: flex-start; flex-direction: row; flex-wrap: wrap; }

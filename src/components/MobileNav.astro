@@ -1,0 +1,41 @@
+---
+import { Home, User, Layers2, Briefcase, FolderGit2, Mail } from 'lucide-react';
+import { SECTIONS, type Lang, type SectionKey } from '../i18n/ui';
+import { useTranslations, localizePath } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+  /** Fija el tab activo en páginas que no tienen `section[id]` para el scroll spy. */
+  activeSection?: SectionKey;
+}
+
+const { lang, activeSection } = Astro.props;
+const t = useTranslations(lang);
+const home = localizePath(lang, '/');
+
+// Los ids de sección son neutrales al idioma, igual que en SECTIONS.
+const SECTION_ICONS: Record<string, any> = {
+  home: Home,
+  about: User,
+  stack: Layers2,
+  work: Briefcase,
+  projects: FolderGit2,
+  contact: Mail,
+};
+---
+
+<nav class="mobilenav" aria-label={t.header.mobileNav}>
+  {SECTIONS.map(s => {
+    const Icon = SECTION_ICONS[s.id];
+    return (
+      <a
+        href={`${home}#${s.id}`}
+        data-section={s.id}
+        class:list={['mobilenav-tab', { active: activeSection === s.key }]}
+      >
+        {Icon && <Icon size={16} strokeWidth={1.5} />}
+        <span class="label">{t.navShort[s.key]}</span>
+      </a>
+    );
+  })}
+</nav>

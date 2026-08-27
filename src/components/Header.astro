@@ -1,13 +1,16 @@
 ---
 import LangToggle from './LangToggle.astro';
-import { SECTIONS, type Lang } from '../i18n/ui';
+import MobileNav from './MobileNav.astro';
+import { SECTIONS, type Lang, type SectionKey } from '../i18n/ui';
 import { useTranslations, localizePath } from '../i18n/utils';
 
 interface Props {
   lang: Lang;
+  /** Se propaga a MobileNav: fija el tab activo donde no hay scroll spy. */
+  activeSection?: SectionKey;
 }
 
-const { lang } = Astro.props;
+const { lang, activeSection } = Astro.props;
 const t = useTranslations(lang);
 const home = localizePath(lang, '/');
 ---
@@ -33,6 +36,8 @@ const home = localizePath(lang, '/');
   </div>
 </header>
 
+<MobileNav lang={lang} activeSection={activeSection} />
+
 <style>
   .topbar-right {
     display: flex;
@@ -42,8 +47,9 @@ const home = localizePath(lang, '/');
 </style>
 
 <script>
-  // Scroll spy — marks active nav link based on visible section
-  const links = document.querySelectorAll<HTMLAnchorElement>('.topbar-nav a[data-section]');
+  // Scroll spy — marks active nav link based on visible section.
+  // Cubre el nav del topbar (desktop) y la barra inferior (mobile) a la vez.
+  const links = document.querySelectorAll<HTMLAnchorElement>('a[data-section]');
 
   const setActive = (id: string) => {
     links.forEach(a => {
