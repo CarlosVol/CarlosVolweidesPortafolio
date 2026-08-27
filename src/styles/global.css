@@ -237,9 +237,6 @@ section {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-.hero-name .accent {
-  -webkit-text-fill-color: var(--accent);
-}
 .hero-name::before,
 .hero-name::after {
   content: attr(data-text);

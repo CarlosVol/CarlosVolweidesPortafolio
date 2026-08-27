@@ -10,11 +10,11 @@ import { useTranslations, localizePath, getProjects, getCmdkItems } from '../i18
 import {
   Code2, Braces, Cpu, FileCode,
   Atom, Layers, Smartphone, Zap,
-  Server, FlaskConical, Globe, Box,
+  Server, FileStack, Radio, Box,
   Database, Cylinder,
   Boxes, Workflow,
-  Brain, Bot, Terminal,
-  TestTube2, GitBranch, MessageSquareCode, RefreshCw,
+  Brain, Bot, Terminal, Rocket, Bug,
+  TestTube2, GitBranch, MessageSquareCode,
   Users, LayoutDashboard, PenTool,
 } from 'lucide-react';
 
@@ -29,17 +29,17 @@ const STACK_ICONS: Record<string, any> = {
   // Languages
   'TypeScript': Code2, 'JavaScript': Braces, 'Python': Cpu, 'PHP': FileCode,
   // Frontend
-  'React': Atom, 'Next.js': Layers, 'React Native': Smartphone, 'Vite': Zap,
+  'React': Atom, 'Next.js': Layers, 'Astro': Rocket, 'React Native': Smartphone,
   // Backend
-  'FastAPI': Zap, 'Node.js': Server, 'Flask': FlaskConical, 'Django': Globe,
+  'FastAPI': Zap, 'Node.js': Server, 'Payload CMS': FileStack, 'WebSocket': Radio,
   // Data
   'PostgreSQL': Database, 'MongoDB': Cylinder, 'Supabase': Database, 'MySQL': Database,
   // Architecture
   'Clean Architecture': Layers, 'DDD': Box, 'Event-driven': Workflow, 'OOP': Boxes,
   // AI / LLM
-  'RAG systems': Brain, 'Vercel AI': Bot, 'Claude Code': Terminal, 'Copilot': Bot,
+  'LLM streaming': Radio, 'Prompt design': Brain, 'Vercel AI': Bot, 'Claude Code': Terminal,
   // Practices
-  'Unit testing': TestTube2, 'Git Flow': GitBranch, 'Code review': MessageSquareCode, 'Refactoring': RefreshCw,
+  'pytest': TestTube2, 'Playwright': Bug, 'Git Flow': GitBranch, 'Code review': MessageSquareCode,
   // Tooling
   'Git': GitBranch, 'Jira': LayoutDashboard, 'Scrum': Users, 'Figma': PenTool,
 };
@@ -50,12 +50,12 @@ const total = String(projects.length).padStart(2, '0');
 // `items` double as STACK_ICONS keys, so they are never translated.
 const STACK = [
   { title: t.stack.languages,    items: ['TypeScript', 'JavaScript', 'Python', 'PHP'] },
-  { title: t.stack.frontend,     items: ['React', 'Next.js', 'React Native', 'Vite'] },
-  { title: t.stack.backend,      items: ['FastAPI', 'Node.js', 'Flask', 'Django'] },
+  { title: t.stack.frontend,     items: ['React', 'Next.js', 'Astro', 'React Native'] },
+  { title: t.stack.backend,      items: ['FastAPI', 'Node.js', 'Payload CMS', 'WebSocket'] },
   { title: t.stack.data,         items: ['PostgreSQL', 'MongoDB', 'Supabase', 'MySQL'] },
   { title: t.stack.architecture, items: ['Clean Architecture', 'DDD', 'Event-driven', 'OOP'] },
-  { title: t.stack.ai,           items: ['RAG systems', 'Vercel AI', 'Claude Code', 'Copilot'] },
-  { title: t.stack.practices,    items: ['Unit testing', 'Git Flow', 'Code review', 'Refactoring'] },
+  { title: t.stack.ai,           items: ['LLM streaming', 'Prompt design', 'Vercel AI', 'Claude Code'] },
+  { title: t.stack.practices,    items: ['pytest', 'Playwright', 'Git Flow', 'Code review'] },
   { title: t.stack.tooling,      items: ['Git', 'Jira', 'Scrum', 'Figma'] },
 ];
 
@@ -64,10 +64,10 @@ const EXPERIENCE = [
     company: 'Digitan Agency',
     role: t.experience.role,
     date: t.experience.date,
-    current: true,
+    current: false,
     summary: t.experience.summary,
     bullets: t.experience.bullets,
-    tags: ['Next.js', 'FastAPI', 'React Native', 'PostgreSQL', 'AWS'],
+    tags: ['Next.js', 'FastAPI', 'React Native', 'PostgreSQL', 'Playwright'],
   },
 ];
 
@@ -101,9 +101,9 @@ const EXPERIENCE = [
         </div>
       </div>
 
-      <h1 class="reveal hero-name" data-text="Carlos Volweides_tsx">
+      <h1 class="reveal hero-name" data-text="Carlos Volweides">
         Carlos<br />
-        Volweides<span class="accent">_tsx</span>
+        Volweides
       </h1>
 
       <div class="hero-tagline reveal">
@@ -160,7 +160,8 @@ const EXPERIENCE = [
           <p>
             {t.about.p1Prefix} <strong>{t.about.p1Lead}</strong> {t.about.p1}
             <span class="hl">JavaScript/TypeScript</span>, <span class="hl">React</span>,
-            <span class="hl">Next.js</span>, <span class="hl">React Native</span> {t.about.p1Tail} <span class="hl">Python</span>
+            <span class="hl">Next.js</span>, <span class="hl">Astro</span>,
+            <span class="hl">React Native</span> {t.about.p1Tail} <span class="hl">Python</span>
             {t.about.p1Python}
           </p>
           <p>

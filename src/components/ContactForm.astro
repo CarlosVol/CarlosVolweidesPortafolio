@@ -26,6 +26,7 @@ const i18n = {
 ---
 
 <div class="contact-form-wrap">
+  <h3 class="contact-form-title">{f.title}</h3>
   <form id="contact-form" class="contact-form" novalidate>
     <div class="form-row">
       <div class="field">
@@ -108,6 +109,14 @@ const i18n = {
     border: 1px solid var(--line);
     border-radius: 0.75rem;
     box-shadow: 0 1.5rem 3.75rem rgba(0, 0, 0, 0.25);
+  }
+
+  .contact-form-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--fg);
+    letter-spacing: -0.01em;
+    margin-bottom: 1.5rem;
   }
 
   .contact-form {

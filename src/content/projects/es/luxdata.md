@@ -28,13 +28,6 @@ Plataforma web con módulos integrados para cada área operativa:
 - **Bloqueo de habitaciones**: mantenimiento, limpieza y estados especiales
 - **Dashboards**: ocupación actual, ingresos del período, distribución geográfica de clientes
 
-## Métricas destacadas
-
-- 82 habitaciones gestionadas
-- 64 habitaciones activas en temporada alta
-- Incremento del 18% en ingresos reportados vs. sistema anterior
-- Check-in de 12 huéspedes simultáneos sin conflictos
-
 ## Stack técnico
 
 - **Frontend**: React, Tailwind CSS

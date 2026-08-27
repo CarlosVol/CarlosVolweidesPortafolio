@@ -1,6 +1,6 @@
 ---
 title: Atlas Protocol
-description: AI-powered web platform for building personalized technical courses. Generates study paths, contextual content, and a chat agent wired to a RAG system over the database.
+description: AI-powered web platform for building personalized technical courses. Generates study paths, contextual content, and a streaming chat agent grounded by system prompts.
 role: Fullstack · Product Manager · Tech Lead
 stack: ['Next.js', 'Supabase', 'Vercel AI', 'FastAPI', 'WebSocket']
 status: live
@@ -12,7 +12,7 @@ idx: '02'
 
 ## Overview
 
-Atlas Protocol is an AI-powered learning platform for developers who want to learn technical subjects in a personalized way. The system generates complete study paths, contextual content for each module, and exposes a chat agent connected to a RAG system over the indexed content.
+Atlas Protocol is an AI-powered learning platform for developers who want to learn technical subjects in a personalized way. The system generates complete study paths, contextual content for each module, and exposes a chat agent grounded in the course content.
 
 ## Problem
 
@@ -24,17 +24,16 @@ A generation pipeline that takes a topic (e.g. "Rust", "System Design") and prod
 
 - A structured learning path broken into modules
 - Explanatory content per module with code examples
-- A knowledge base indexed as embeddings (RAG)
-- A conversational agent that answers questions with course context
+- A conversational agent that answers in streaming with course context
 
 ## Architecture
 
-The FastAPI backend runs the generation pipeline and the RAG layer. The Next.js frontend consumes the API and keeps session state in Supabase. The agent's real-time communication uses WebSocket. The LLM is orchestrated through the Vercel AI SDK.
+The FastAPI backend runs the generation pipeline and builds the system prompts that ground the agent in the course and user context. The Next.js frontend consumes the API and keeps session state in Supabase. The agent's real-time communication uses WebSocket, with model responses streamed token by token. The LLM is orchestrated through the Vercel AI SDK.
 
 ## Tech stack
 
 - **Frontend**: Next.js 14, TypeScript, Vercel AI SDK
-- **Backend**: FastAPI, Python, RAG system with embeddings
+- **Backend**: FastAPI, Python, streaming LLM orchestration
 - **Database**: Supabase (PostgreSQL + Storage)
 - **Real-time**: WebSocket for response streaming
 - **Deploy**: Vercel (frontend), Railway (backend)

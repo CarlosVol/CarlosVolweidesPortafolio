@@ -28,13 +28,6 @@ A web platform with integrated modules for each operational area:
 - **Room blocking**: maintenance, cleaning and special states
 - **Dashboards**: current occupancy, revenue for the period, geographic distribution of guests
 
-## Key metrics
-
-- 82 rooms managed
-- 64 rooms active in high season
-- 18% increase in reported revenue vs. the previous system
-- 12 simultaneous guest check-ins with no conflicts
-
 ## Tech stack
 
 - **Frontend**: React, Tailwind CSS

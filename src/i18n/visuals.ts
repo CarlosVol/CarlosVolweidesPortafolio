@@ -22,32 +22,35 @@ export const PROJECT_VISUALS: Record<string, string> = {
 │  atlas/protocol             │
 │  ─────────────              │
 │  > generate_course("rust")  │
-│  · indexing knowledge ████  │
-│  · embedding 1.4M tokens    │
-│  · path generated [12 mod]  │
+│  · building path       ███  │
+│  · modules drafted          │
 │                             │
-│  rag.query("ownership")     │
-│  └─ context: 8 chunks       │
-│  └─ confidence: 0.94        │
+│  chat.ask("ownership")      │
+│  └─ system prompt: course   │
+│  └─ streaming ▍             │
 │                             │
 │  ◉ session: active          │
 └─────────────────────────────┘`,
   'repositorio-ugma': `┌──────────────────┐
 │ ugma/repo        │
 │ ──               │
-│ tesis: 247       │
-│ aprobadas: 198   │
-│ pendientes: 49   │
-│ usuarios: 1,2k   │
+│ buscar tesis     │
+│ ├─ área          │
+│ ├─ autor         │
+│ └─ año           │
+│                  │
+│ aprobación:      │
+│ ○─○─◉─○          │
 │                  │
 │ [admin · alumno] │
 └──────────────────┘`,
   'luxdata': `┌──────────────┐
 │ luxdata      │
 │ ──           │
-│ rooms 64/82  │
-│ checkin  12  │
-│ revenue ↑18% │
+│ reservas     │
+│ check in/out │
+│ facturación  │
+│ ocupación    │
 └──────────────┘`,
 };
 

@@ -24,11 +24,14 @@ src/
 │   ├── Footer.astro
 │   ├── ContactForm.astro
 │   ├── CmdK.tsx          — React island (client:load); Cmd+K palette
+│   ├── ProjectCard.astro — one project row; shared by HomePage and ProjectsPage
+│   ├── MediaSlot.astro   — project media: image, video, or scroll-snap carousel
 │   ├── HomePage.astro    — the whole one-pager, takes a `lang` prop
 │   ├── ProjectsPage.astro
 │   └── ProjectPage.astro
 ├── i18n/
 │   ├── ui.ts             — es/en dictionaries + SECTIONS (ids ↔ label keys)
+│   ├── visuals.ts        — per-project ASCII art + asciiCols()
 │   └── utils.ts          — useTranslations, localizePath, getProjects, getCmdkItems
 ├── content/
 │   └── projects/{es,en}/ — one .md per project per locale (same slugs)
@@ -54,7 +57,7 @@ Spanish is the default locale and lives at the root (`/`, `/projects`, `/project
 
 **All user-facing copy lives in `src/i18n/ui.ts`.** `es` is the source of truth for the shape — `en` is typed as `Dict`, so a missing key fails the build. Never hardcode a string in a component.
 
-Things that are deliberately **not** translated: `STACK[].items` (they double as `STACK_ICONS` keys), section ids (`home`/`about`/`stack`/`work`/`projects`/`contact`), the `status` enum, and the ASCII art in `PROJECT_VISUALS` (hand-tuned column widths).
+Things that are deliberately **not** translated: `STACK[].items` (they double as `STACK_ICONS` keys), section ids (`home`/`about`/`stack`/`work`/`projects`/`contact`), the `status` enum, and the ASCII art in `src/i18n/visuals.ts` (hand-tuned column widths).
 
 Client-side code can't read Astro frontmatter, so strings are injected: `<script define:vars={{ i18n }}>` in `ContactForm.astro` and `HomePage.astro`, and props for the `CmdK` island (`getCmdkItems(lang)`).
 
@@ -66,11 +69,11 @@ Detection order (first visit only, `/` only): `lang` cookie → `Accept-Language
 
 ## Content
 
-**Portfolio copy** (bio, experience, stack): `src/i18n/ui.ts`. Layout-only constants (`PROJECT_VISUALS`, `SECTION_SIZES`, `STACK_ICONS`) are at the top of `src/components/HomePage.astro`.
+**Portfolio copy** (bio, experience, stack): `src/i18n/ui.ts`. `STACK` and `STACK_ICONS` are at the top of `src/components/HomePage.astro`; the per-project ASCII art lives in `src/i18n/visuals.ts`.
 
 **To add/edit a project**: edit `src/content/projects/<lang>/<slug>.md` — the same slug must exist in **both** `es/` and `en/`. Fields are defined in `src/content.config.ts`. The `idx` field controls sort order and display numbering.
 
-`getProjects(lang)` (in `src/i18n/utils.ts`) filters the collection by the locale prefix in the entry `id` and exposes a clean `slug`. Always use it — a bare `getCollection('projects')` returns all six files across both locales and inflates the project counter.
+`getProjects(lang)` (in `src/i18n/utils.ts`) filters the collection by the locale prefix in the entry `id` and exposes a clean `slug`. Always use it — a bare `getCollection('projects')` returns every file across both locales and inflates the project counter.
 
 ## Contact form
 
@@ -93,7 +96,7 @@ All colors and spacing live in CSS custom properties in `src/styles/global.css`:
 
 It deliberately stays at 16px below 900px: `@media` breakpoints are in *viewport* px and do **not** respond to the root font-size, so scaling up there would blow out the mobile layout without the breakpoints moving with it.
 
-Things that stay in `px` on purpose: border widths, the `gap: 1px` hairlines in `.stack-grid`/`.projects-grid`/`.contact-grid`, `@media` breakpoints, the `.bg-grid` pattern, and `blur()` radii.
+Things that stay in `px` on purpose: border widths, the `gap: 1px` hairlines in `.stack-grid`/`.projects-stack`/`.contact-grid`, `@media` breakpoints, the `.bg-grid` pattern, and `blur()` radii.
 
 The `vw` terms inside `clamp()` (e.g. `.hero h1`) must **not** be converted — `vw` is already viewport-relative and scaling it would double-count.
 

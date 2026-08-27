@@ -12,7 +12,7 @@ idx: '03'
 
 ## Overview
 
-Sistema de gestión de trabajos de grado para la Universidad Gran Mariscal de Ayacucho (UGMA). Actualmente en producción con más de 1,200 usuarios registrados y 247 tesis indexadas.
+Sistema de gestión de trabajos de grado para la Universidad Gran Mariscal de Ayacucho (UGMA), en uso interno en la universidad.
 
 ## Problema
 
@@ -35,7 +35,6 @@ Plataforma web con dos roles diferenciados:
 
 ## Impacto
 
-- 247 tesis indexadas
-- 198 tesis aprobadas y disponibles
-- 49 en proceso de revisión
-- 1,200+ usuarios activos (alumnos + coordinadores)
+Sustituyó un proceso que se llevaba en papel y por correo. Los alumnos pasaron a poder consultar el trabajo de los graduados por su cuenta, y los coordinadores a ver en qué punto del ciclo está cada tesis sin perseguir el expediente.
+
+Está implementado de manera interna en la universidad.

@@ -28,7 +28,7 @@ const es = {
   seo: {
     homeTitle: 'Carlos Volweides — Ingeniero Fullstack',
     homeDescription:
-      'Ingeniero fullstack especializado en TypeScript, React, Next.js, Python (FastAPI), arquitectura limpia, DDD e integración de LLM/RAG. Basado en Caracas, Venezuela.',
+      'Ingeniero fullstack especializado en TypeScript, React, Next.js, Astro, Python (FastAPI), arquitectura limpia, DDD e integración de LLMs. Basado en Caracas, Venezuela.',
     projectsTitle: 'Proyectos — Carlos Volweides',
     projectsDescription:
       'Proyectos seleccionados de Carlos Volweides: Frida, Atlas Protocol, Repositorio UGMA, Luxdata.',
@@ -45,7 +45,6 @@ const es = {
   },
 
   header: {
-    available: '/ disponible para trabajar',
     cmdk: 'Abrir paleta de comandos',
     switchTo: 'Ver en inglés',
   },
@@ -59,10 +58,10 @@ const es = {
     statusValue: '● Disponible para trabajar',
     localTime: 'Hora local',
     taglineRole: 'Ingeniero Fullstack',
-    taglineLead: 'construyo aplicaciones web & mobile end-to-end con énfasis en',
+    taglineLead: 'Construyo aplicaciones web & mobile end-to-end con énfasis en',
     taglineArch: 'arquitectura limpia',
     taglineDdd: 'DDD',
-    taglineLlm: 'LLMs / RAG',
+    taglineLlm: 'LLMs',
     taglineJoin: 'e integración de',
     ctaProjects: 'Ver proyectos',
     ctaContact: 'Hablemos',
@@ -79,20 +78,20 @@ const es = {
     edu: 'Estudios',
     eduValue: 'UGMA · Ing. Informática',
     years: 'Años',
-    yearsValue: '3+ produciendo',
+    yearsValue: '3+ construyendo',
     mode: 'Modo',
     modeValue: 'Remoto · Async',
     p1Lead: 'desarrollador fullstack',
     p1: 'con experiencia construyendo aplicaciones web y mobile end-to-end. Trabajo principalmente con',
     p1Tail: 'y',
-    p1Python: '(FastAPI, Flask, Django).',
+    p1Python: '(FastAPI).',
     p1Prefix: 'Soy',
     p2Lead: 'APIs escalables',
     p2Prefix: 'Mi enfoque está en el diseño e implementación de',
     p2: 'aplicando arquitectura limpia, Domain-Driven Design y comunicación basada en eventos. He participado en sistemas de logística, facturación y plataformas multi-aplicación que conectan web y mobile.',
     p3Prefix:
       'Trabajo bien en equipo bajo Scrum, pero también entrego proyectos completos de forma autónoma — desde requerimientos hasta despliegue. Me interesan los sistemas escalables y la integración de',
-    p3Lead: 'LLMs y RAG',
+    p3Lead: 'LLMs',
     p3: 'en productos reales.',
   },
 
@@ -111,13 +110,13 @@ const es = {
   experience: {
     label: 'experiencia',
     role: 'Desarrollador Fullstack',
-    date: '2025 — Actualidad',
+    date: '2025 — 2026',
     summary:
-      'Construcción de aplicaciones web y mobile end-to-end en plataformas de logística, sistemas de facturación e integraciones multi-app.',
+      'Construí aplicaciones web y mobile end-to-end en plataformas de logística, sistemas de facturación e integraciones multi-app. En remoto para Córdoba, Argentina.',
     bullets: [
-      'Diseño e implementación de APIs escalables aplicando arquitectura limpia, DDD y comunicación basada en eventos.',
-      'Maquetación a partir de Figma e integración full-stack desde requerimientos funcionales hasta despliegue.',
-      'Entrega autónoma de un proyecto completo en comunicación directa con cliente, en entornos develop / staging / production.',
+      'Diseñé e implementé APIs escalables en Python (FastAPI) aplicando arquitectura limpia, DDD y comunicación basada en eventos.',
+      'Maqueté a partir de Figma e integré full-stack desde requerimientos funcionales hasta despliegue en develop / staging / production.',
+      'Entregué Frida en solitario, de principio a fin: 12 contextos acotados, 356 pruebas con pytest y 38 E2E con Playwright.',
     ],
   },
 
@@ -143,7 +142,7 @@ const es = {
   },
 
   footer: {
-    handcrafted: 'hecho a mano en Caracas',
+    rights: 'Todos los derechos reservados.',
   },
 
   cmdk: {
@@ -160,6 +159,7 @@ const es = {
   },
 
   form: {
+    title: 'Formulario de contacto',
     name: 'Nombre',
     email: 'Email',
     reason: 'Motivo',
@@ -238,7 +238,7 @@ const en: Dict = {
   seo: {
     homeTitle: 'Carlos Volweides — Fullstack Engineer',
     homeDescription:
-      'Fullstack Engineer specializing in TypeScript, React, Next.js, Python (FastAPI), clean architecture, DDD, and LLM/RAG integration. Based in Caracas, Venezuela.',
+      'Fullstack Engineer specializing in TypeScript, React, Next.js, Astro, Python (FastAPI), clean architecture, DDD, and LLM integration. Based in Caracas, Venezuela.',
     projectsTitle: 'Projects — Carlos Volweides',
     projectsDescription:
       'Selected projects by Carlos Volweides: Frida, Atlas Protocol, Repositorio UGMA, Luxdata.',
@@ -255,7 +255,6 @@ const en: Dict = {
   },
 
   header: {
-    available: '/ available for work',
     cmdk: 'Open command palette',
     switchTo: 'View in Spanish',
   },
@@ -272,7 +271,7 @@ const en: Dict = {
     taglineLead: 'I build end-to-end web & mobile applications with a focus on',
     taglineArch: 'clean architecture',
     taglineDdd: 'DDD',
-    taglineLlm: 'LLMs / RAG',
+    taglineLlm: 'LLMs',
     taglineJoin: 'and the integration of',
     ctaProjects: 'View projects',
     ctaContact: 'Get in touch',
@@ -289,20 +288,20 @@ const en: Dict = {
     edu: 'Edu',
     eduValue: 'UGMA · Computer Engineering',
     years: 'Years',
-    yearsValue: '3+ shipping',
+    yearsValue: '3+ building',
     mode: 'Mode',
     modeValue: 'Remote · Async',
     p1Prefix: "I'm a",
     p1Lead: 'fullstack developer',
     p1: 'with experience building end-to-end web and mobile applications. I work mainly with',
     p1Tail: 'and',
-    p1Python: '(FastAPI, Flask, Django).',
+    p1Python: '(FastAPI).',
     p2Prefix: 'My focus is designing and implementing',
     p2Lead: 'scalable APIs',
     p2: 'using clean architecture, Domain-Driven Design and event-driven communication. I have worked on logistics systems, billing platforms and multi-app products that connect web and mobile.',
     p3Prefix:
       'I work well in a Scrum team, but I also deliver entire projects autonomously — from requirements to deployment. I care about scalable systems and the integration of',
-    p3Lead: 'LLMs and RAG',
+    p3Lead: 'LLMs',
     p3: 'into real products.',
   },
 
@@ -321,13 +320,13 @@ const en: Dict = {
   experience: {
     label: 'experience',
     role: 'Fullstack Developer',
-    date: '2025 — Now',
+    date: '2025 — 2026',
     summary:
-      'Building end-to-end web and mobile applications across logistics platforms, billing systems and multi-app integrations.',
+      'Built end-to-end web and mobile applications across logistics platforms, billing systems and multi-app integrations. Remote, for Córdoba, Argentina.',
     bullets: [
-      'Designed and implemented scalable APIs using clean architecture, DDD and event-driven communication.',
-      'Built UIs from Figma and handled full-stack integration, from functional requirements through deployment.',
-      'Delivered a complete project autonomously in direct communication with the client, across develop / staging / production environments.',
+      'Designed and implemented scalable Python (FastAPI) APIs using clean architecture, DDD and event-driven communication.',
+      'Built UIs from Figma and handled full-stack integration, from functional requirements through deployment across develop / staging / production.',
+      'Delivered Frida solo, end to end: 12 bounded contexts, 356 pytest tests and 38 Playwright E2E tests.',
     ],
   },
 
@@ -353,7 +352,7 @@ const en: Dict = {
   },
 
   footer: {
-    handcrafted: 'handcrafted in Caracas',
+    rights: 'All rights reserved.',
   },
 
   cmdk: {
@@ -370,6 +369,7 @@ const en: Dict = {
   },
 
   form: {
+    title: 'Contact form',
     name: 'Name',
     email: 'Email',
     reason: 'Reason',

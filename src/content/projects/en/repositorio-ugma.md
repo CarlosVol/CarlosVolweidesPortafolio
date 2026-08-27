@@ -12,7 +12,7 @@ idx: '03'
 
 ## Overview
 
-A thesis management system for Universidad Gran Mariscal de Ayacucho (UGMA). Currently in production with more than 1,200 registered users and 247 indexed theses.
+A thesis management system for Universidad Gran Mariscal de Ayacucho (UGMA), in internal use at the university.
 
 ## Problem
 
@@ -35,7 +35,6 @@ A web platform with two distinct roles:
 
 ## Impact
 
-- 247 theses indexed
-- 198 theses approved and available
-- 49 under review
-- 1,200+ active users (students + coordinators)
+It replaced a process run on paper and over email. Students can now look up graduates' work on their own, and coordinators can see where each thesis sits in the cycle without chasing the paperwork.
+
+It is deployed internally at the university.
